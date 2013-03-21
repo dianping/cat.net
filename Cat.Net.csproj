@@ -52,6 +52,8 @@
     <Compile Include="Message\Internals\DefaultEvent.cs" />
     <Compile Include="Message\Internals\DefaultHeartbeat.cs" />
     <Compile Include="Message\Internals\DefaultTransaction.cs" />
+    <Compile Include="Message\Internals\MessageId.cs" />
+    <Compile Include="Message\Internals\MessageIdFactory.cs" />
     <Compile Include="Message\Internals\MilliSecondTimer.cs" />
     <Compile Include="Message\Internals\NullEvent.cs" />
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
