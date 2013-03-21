@@ -45,8 +45,14 @@
     <Compile Include="Configuration\ClientConfig.cs" />
     <Compile Include="Configuration\Domain.cs" />
     <Compile Include="Configuration\Server.cs" />
+    <Compile Include="Message\IEvent.cs" />
+    <Compile Include="Message\IHeartbeat.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="Message\Internals\AbstractMessage.cs" />
+    <Compile Include="Message\Internals\NullEvent.cs" />
+    <Compile Include="Message\Internals\NullHeartbeat.cs" />
+    <Compile Include="Message\Internals\NullTransaction.cs" />
+    <Compile Include="Message\ITransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
