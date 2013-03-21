@@ -98,6 +98,8 @@ namespace Com.Dianping.Cat.Message.Internals
             return "0".Equals(_mStatus);
         }
 
+        #endregion
+
         ///// <summary>
         /////   TODO: 可以删除，没有用
         ///// </summary>
@@ -106,8 +108,6 @@ namespace Com.Dianping.Cat.Message.Internals
         //{
         //    _mStatus = e.GetType().FullName;
         //}
-
-        #endregion
 
         protected void SetCompleted(bool completed)
         {

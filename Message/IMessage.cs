@@ -103,6 +103,6 @@
 		 * @param e
 		 *           exception.
 		 */
-        void SetStatus(Exception e);
+        //void SetStatus(Exception e);
     }
 }

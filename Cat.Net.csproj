@@ -60,7 +60,6 @@
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
     <Compile Include="Message\Internals\NullTransaction.cs" />
     <Compile Include="Message\ITransaction.cs" />
-    <Compile Include="Message\MessageProducer.cs" />
     <Compile Include="NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

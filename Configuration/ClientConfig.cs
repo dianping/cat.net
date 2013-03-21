@@ -16,13 +16,12 @@
         }
 
         /// <summary>
-        ///   是否是开发模式
+        ///   是否是开发模式（TODO: 目前没用到）
         /// </summary>
         public bool DevMode { get; set; }
 
         public Domain Domain
         {
-            //NOTE: Enabled = false
             get { return _mDomain ?? (_mDomain = new Domain()); }
 
             set { _mDomain = value; }

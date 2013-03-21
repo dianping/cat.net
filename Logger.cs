@@ -5,6 +5,9 @@ namespace Com.Dianping.Cat
     using Message.Internals;
     using System.IO;
 
+    /// <summary>
+    ///   简单记录Cat客户端的启动日志
+    /// </summary>
     public class Logger
     {
         private static StreamWriter _mWriter;
@@ -41,6 +44,10 @@ namespace Com.Dianping.Cat
             }
         }
 
+        /// <summary>
+        ///   初始化（TODO: 目前没用到）
+        /// </summary>
+        /// <param name="logFile"> </param>
         public static void Initialize(string logFile)
         {
             try
