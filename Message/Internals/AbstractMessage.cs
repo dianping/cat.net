@@ -98,14 +98,14 @@ namespace Com.Dianping.Cat.Message.Internals
             return "0".Equals(_mStatus);
         }
 
-        /// <summary>
-        ///   TODO: 可以删除，没有用
-        /// </summary>
-        /// <param name="e"> </param>
-        public void SetStatus(Exception e)
-        {
-            _mStatus = e.GetType().FullName;
-        }
+        ///// <summary>
+        /////   TODO: 可以删除，没有用
+        ///// </summary>
+        ///// <param name="e"> </param>
+        //public void SetStatus(Exception e)
+        //{
+        //    _mStatus = e.GetType().FullName;
+        //}
 
         #endregion
 

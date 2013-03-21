@@ -23,7 +23,7 @@
         public Domain Domain
         {
             //NOTE: Enabled = false
-            get { return _mDomain ?? (_mDomain = new Domain {Id = "Unknown", Enabled = false}); }
+            get { return _mDomain ?? (_mDomain = new Domain()); }
 
             set { _mDomain = value; }
         }

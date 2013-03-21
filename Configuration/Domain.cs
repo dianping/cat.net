@@ -5,17 +5,22 @@
     /// </summary>
     public class Domain
     {
+        private string _id = "Unknown";
         private bool _mEnabled = true;
 
         /// <summary>
         ///   当前系统的标识
         /// </summary>
-        public string Id { get; set; }
+        public string Id
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
 
-        /// <summary>
-        ///   当前系统的IP
-        /// </summary>
-        public string Ip { get; set; }
+        ///// <summary>
+        /////   当前系统的IP
+        ///// </summary>
+        //public string Ip { get; set; }
 
         /// <summary>
         ///   Cat日志是否开启，默认开启
