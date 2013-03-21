@@ -16,7 +16,7 @@ namespace Com.Dianping.Cat.Message.Internals
         {
             _mType = type;
             _mName = name;
-            TimestampInMicros = DateTime.Now.Ticks/10L;
+            TimestampInMicros = MilliSecondTimer.CurrentTimeMicros();
         }
 
         /// <summary>

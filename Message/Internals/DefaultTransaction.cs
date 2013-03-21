@@ -92,7 +92,7 @@
             }
             else
             {
-                _mDurationInMicro = DateTime.Now.Ticks/10L - TimestampInMicros;
+                _mDurationInMicro = MilliSecondTimer.CurrentTimeMicros() - TimestampInMicros;
 
                 SetCompleted(true);
 
