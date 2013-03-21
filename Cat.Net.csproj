@@ -49,6 +49,9 @@
     <Compile Include="Message\IHeartbeat.cs" />
     <Compile Include="Message\IMessage.cs" />
     <Compile Include="Message\Internals\AbstractMessage.cs" />
+    <Compile Include="Message\Internals\DefaultEvent.cs" />
+    <Compile Include="Message\Internals\DefaultHeartbeat.cs" />
+    <Compile Include="Message\Internals\DefaultTransaction.cs" />
     <Compile Include="Message\Internals\NullEvent.cs" />
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
     <Compile Include="Message\Internals\NullTransaction.cs" />
