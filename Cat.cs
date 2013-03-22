@@ -1,14 +1,13 @@
-﻿using System.Linq;
-
-namespace Com.Dianping.Cat
+﻿namespace Com.Dianping.Cat
 {
     using Configuration;
-        //using Message;
-        //using Message.Internals;
-        //using Message.Spi;
     using System.Collections.Generic;
     using System.IO;
     using System.Xml;
+    using System.Linq;
+    using Message;
+    using Message.Internals;
+    using Message.Spi;
 
     public class Cat
     {
@@ -16,23 +15,23 @@ namespace Com.Dianping.Cat
 
         private bool _mInitialized;
 
-        //private IMessageManager _mManager;
+        private IMessageManager _mManager;
 
-        //private IMessageProducer _mProducer;
+        private IMessageProducer _mProducer;
 
         private Cat()
         {
         }
 
-        //public static IMessageManager GetManager()
-        //{
-        //    return Instance._mManager;
-        //}
+        public static IMessageManager GetManager()
+        {
+            return Instance._mManager;
+        }
 
-        //public static IMessageProducer GetProducer()
-        //{
-        //    return Instance._mProducer;
-        //}
+        public static IMessageProducer GetProducer()
+        {
+            return Instance._mProducer;
+        }
 
         public static void Initialize(string configFile)
         {
@@ -44,12 +43,12 @@ namespace Com.Dianping.Cat
 
             Logger.Info("Initializing Cat .Net Client ...");
 
-            //DefaultMessageManager manager = new DefaultMessageManager();
+            DefaultMessageManager manager = new DefaultMessageManager();
             ClientConfig clientConfig = LoadClientConfig(configFile);
 
-            //manager.InitializeClient(clientConfig);
-            //Instance._mProducer = new DefaultMessageProducer(manager);
-            //Instance._mManager = manager;
+            manager.InitializeClient(clientConfig);
+            Instance._mProducer = new DefaultMessageProducer(manager);
+            Instance._mManager = manager;
             Instance._mInitialized = true;
 
             Logger.Info("Cat .Net Client initialized.");

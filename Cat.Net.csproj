@@ -56,8 +56,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Message\Internals\AbstractMessage.cs" />
+    <Compile Include="Message\Internals\CatThreadLocal.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Message\Internals\DefaultEvent.cs" />
     <Compile Include="Message\Internals\DefaultHeartbeat.cs" />
+    <Compile Include="Message\Internals\DefaultMessageManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Message\Internals\DefaultMessageProducer.cs" />
     <Compile Include="Message\Internals\DefaultTransaction.cs" />
     <Compile Include="Message\Internals\MessageId.cs" />
@@ -70,6 +76,8 @@
     <Compile Include="Message\Spi\IMessageManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Message\Spi\IMessageTree.cs" />
+    <Compile Include="Message\Spi\Internals\DefaultMessageTree.cs" />
     <Compile Include="NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

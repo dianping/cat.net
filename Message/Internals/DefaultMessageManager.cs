@@ -5,7 +5,6 @@ namespace Com.Dianping.Cat.Message.Internals
     using Dianping.Cat;
     using Configuration;
     using Message;
-    using Io;
     using Spi;
     using Spi.Internals;
     using System;
@@ -21,40 +20,33 @@ namespace Com.Dianping.Cat.Message.Internals
 
         private ClientConfig _mClientConfig;
 
-        private Domain _mDomain;
         private MessageIdFactory _mFactory;
 
         private bool _mFirstMessage = true;
         private String _mHostName;
-        private TransportManager _mManager;
-        private IMessageStatistics _mStatistics;
-
-        private StatusUpdateTask _mStatusUpdateTask;
 
         #region 未用到的方法
 
-        public virtual TransportManager TransportManager
-        {
-            get { return _mManager; }
-        }
+        //public virtual TransportManager TransportManager
+        //{
+        //    get { return _mManager; }
+        //}
 
         public virtual ClientConfig ClientConfig
         {
             get { return _mClientConfig; }
         }
 
-        //TODO：无用，可以删除
         public virtual ITransaction PeekTransaction
         {
             get
             {
                 Context ctx = GetContext();
 
-                return ctx != null ? ctx.PeekTransaction(this) : null;
+                return ctx != null ? ctx.PeekTransaction() : null;
             }
         }
 
-        //TODO：无用，可以删除
         public virtual IMessageTree ThreadLocalMessageTree
         {
             get
@@ -65,7 +57,6 @@ namespace Com.Dianping.Cat.Message.Internals
             }
         }
 
-        //TODO：无用，可以删除
         public virtual void Reset()
         {
             // destroy current thread local data
@@ -79,30 +70,29 @@ namespace Com.Dianping.Cat.Message.Internals
 
         #endregion
 
+        //private TransportManager _mManager;
+        //private IMessageStatistics _mStatistics;
+
+        //private StatusUpdateTask _mStatusUpdateTask;
+
         #region IMessageManager Members
 
         public virtual void InitializeClient(ClientConfig clientConfig)
         {
             _mClientConfig = clientConfig ?? new ClientConfig();
 
-            _mDomain = _mClientConfig.Domain;
             _mHostName = NetworkInterfaceManager.GetLocalHostName();
 
-            //if (_mDomain.Ip == null)
-            //{
-            //    _mDomain.Ip = NetworkInterfaceManager.GetLocalHostAddress();
-            //}
-
-            _mStatistics = new DefaultMessageStatistics();
-            _mManager = new TransportManager(_mClientConfig, _mStatistics);
+            //_mStatistics = new DefaultMessageStatistics();
+            //_mManager = new TransportManager(_mClientConfig, _mStatistics);
             _mFactory = new MessageIdFactory();
-            _mStatusUpdateTask = new StatusUpdateTask(_mStatistics);
+            //_mStatusUpdateTask = new StatusUpdateTask(_mStatistics);
 
             // initialize domain and ip address
-            _mFactory.Initialize(_mDomain.Id);
+            _mFactory.Initialize(_mClientConfig.Domain.Id);
 
-            // start status update task
-            ThreadPool.QueueUserWorkItem(_mStatusUpdateTask.Run);
+            //// start status update task
+            //ThreadPool.QueueUserWorkItem(_mStatusUpdateTask.Run);
 
             Logger.Info("Thread(StatusUpdateTask) started.");
         }
@@ -114,7 +104,7 @@ namespace Com.Dianping.Cat.Message.Internals
 
         public virtual bool CatEnabled
         {
-            get { return _mDomain != null && _mDomain.Enabled && _mContext.Value != null; }
+            get { return _mClientConfig.Domain.Enabled && _mContext.Value != null; }
         }
 
         public virtual void Add(IMessage message)
@@ -131,9 +121,8 @@ namespace Com.Dianping.Cat.Message.Internals
 
         public virtual void Setup()
         {
-            Context ctx = _mDomain != null
-                              ? new Context(_mDomain.Id, _mHostName, NetworkInterfaceManager.GetLocalHostAddress())
-                              : new Context("Unknown", _mHostName, "");
+            Context ctx = new Context(_mClientConfig.Domain.Id, _mHostName,
+                                      NetworkInterfaceManager.GetLocalHostAddress());
 
             _mContext.Value = ctx;
         }
@@ -175,20 +164,20 @@ namespace Com.Dianping.Cat.Message.Internals
 
         internal void Flush(IMessageTree tree)
         {
-            if (_mManager != null)
-            {
-                IMessageSender sender = _mManager.Sender;
+            //if (_mManager != null)
+            //{
+            //    IMessageSender sender = _mManager.Sender;
 
-                if (sender != null && !ShouldThrottle(tree))
-                {
-                    sender.Send(tree);
+            //    if (sender != null && !ShouldThrottle(tree))
+            //    {
+            //        sender.Send(tree);
 
-                    if (_mStatistics != null)
-                    {
-                        _mStatistics.OnSending(tree);
-                    }
-                }
-            }
+            //        if (_mStatistics != null)
+            //        {
+            //            _mStatistics.OnSending(tree);
+            //        }
+            //    }
+            //}
         }
 
         internal Context GetContext()
@@ -216,10 +205,10 @@ namespace Com.Dianping.Cat.Message.Internals
             return _mFactory.GetNextId();
         }
 
-        internal bool ShouldThrottle(IMessageTree tree)
-        {
-            return false;
-        }
+        //internal bool ShouldThrottle(IMessageTree tree)
+        //{
+        //    return false;
+        //}
 
         #region Nested type: Context
 
@@ -245,7 +234,6 @@ namespace Com.Dianping.Cat.Message.Internals
                 _mTree.IpAddress = ipAddress;
             }
 
-            //TODO：无用，可以删除
             public IMessageTree Tree
             {
                 get { return _mTree; }
@@ -261,7 +249,6 @@ namespace Com.Dianping.Cat.Message.Internals
                 if ((_mStack.Count == 0))
                 {
                     IMessageTree tree = _mTree.Copy();
-
                     tree.MessageId = manager.NextMessageId();
                     tree.Message = message;
                     manager.Flush(tree);
@@ -269,7 +256,6 @@ namespace Com.Dianping.Cat.Message.Internals
                 else
                 {
                     ITransaction entry = _mStack.Peek();
-
                     entry.AddChild(message);
                 }
             }
@@ -285,43 +271,34 @@ namespace Com.Dianping.Cat.Message.Internals
                 if (_mStack.Count != 0)
                 {
                     ITransaction current = _mStack.Pop();
-
-                    if (transaction == current)
+                    while (transaction != current && _mStack.Count != 0)
                     {
-                        ValidateTransaction(current);
+                        current = _mStack.Pop();
                     }
-                    else
-                    {
-                        while (transaction != current && _mStack.Count != 0)
-                        {
-                            ValidateTransaction(current);
-
-                            current = _mStack.Pop();
-                        }
-                    }
+                    if (transaction != current)
+                        throw new Exception("没找到对应的Transaction.");
 
                     if (_mStack.Count == 0)
                     {
-                        IMessageTree tree = _mTree.Copy();
+                        ValidateTransaction(current);
 
+                        IMessageTree tree = _mTree.Copy();
                         _mTree.MessageId = null;
                         _mTree.Message = null;
                         manager.Flush(tree);
                         return true;
                     }
+                    return false;
                 }
 
-                return false;
+                throw new Exception("Stack为空, 没找到对应的Transaction.");
             }
 
-            //TODO：无用，可以删除
             /// <summary>
             ///   返回stack的顶部对象
             /// </summary>
-            /// <param name="defaultMessageManager"> </param>
             /// <returns> </returns>
-            public ITransaction PeekTransaction(
-                DefaultMessageManager defaultMessageManager)
+            public ITransaction PeekTransaction()
             {
                 return (_mStack.Count == 0) ? null : _mStack.Peek();
             }
@@ -335,11 +312,8 @@ namespace Com.Dianping.Cat.Message.Internals
             {
                 if (_mStack.Count != 0)
                 {
-                    ITransaction entry = _mStack.Peek();
-
-                    //TODO: 设置Standalone=false
                     transaction.Standalone = false;
-
+                    ITransaction entry = _mStack.Peek();
                     entry.AddChild(transaction);
                 }
                 else
@@ -354,35 +328,24 @@ namespace Com.Dianping.Cat.Message.Internals
             //验证Transaction
             internal void ValidateTransaction(ITransaction transaction)
             {
-                //非独立的直接返回
-                if (!transaction.Standalone)
-                {
-                    return;
-                }
-
                 IList<IMessage> children = transaction.Children;
                 int len = children.Count;
-
                 for (int i = 0; i < len; i++)
                 {
                     IMessage message = children[i];
-
                     var transaction1 = message as ITransaction;
                     if (transaction1 != null)
                     {
-                        //TODO: 代码多余，子Transaction都是非独立的
                         ValidateTransaction(transaction1);
                     }
                 }
 
-                //TODO：transaction.Standalone条件多余
-                if (!transaction.IsCompleted()) // && transaction.Standalone && transaction is DefaultTransaction)
+                if (!transaction.IsCompleted())
                 {
                     // missing transaction end, log a BadInstrument event so that
                     // developer can fix the code
                     IMessage notCompleteEvent = new DefaultEvent("CAT", "BadInstrument")
                                                     {Status = "TransactionNotCompleted"};
-
                     notCompleteEvent.Complete();
                     transaction.AddChild(notCompleteEvent);
                     transaction.Complete();

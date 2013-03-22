@@ -23,11 +23,11 @@
         ///<value> peek transaction for current thread, null if no transaction there. </value>
         ITransaction PeekTransaction { get; }
 
-        /////<summary>
-        /////  Get thread local message information.
-        /////</summary>
-        /////<value> message tree, null means current thread is not setup correctly. </value>
-        //IMessageTree ThreadLocalMessageTree { get; }
+        ///<summary>
+        ///  Get thread local message information.
+        ///</summary>
+        ///<value> message tree, null means current thread is not setup correctly. </value>
+        IMessageTree ThreadLocalMessageTree { get; }
 
         ///<summary>
         ///  Check if CAT logging is enabled or disabled.
