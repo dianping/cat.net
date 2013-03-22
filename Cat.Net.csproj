@@ -42,6 +42,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cat.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Configuration\ClientConfig.cs" />
     <Compile Include="Configuration\Domain.cs" />
     <Compile Include="Configuration\Server.cs" />
