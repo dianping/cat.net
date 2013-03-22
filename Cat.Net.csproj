@@ -52,9 +52,13 @@
     <Compile Include="Message\IEvent.cs" />
     <Compile Include="Message\IHeartbeat.cs" />
     <Compile Include="Message\IMessage.cs" />
+    <Compile Include="Message\IMessageProducer.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Message\Internals\AbstractMessage.cs" />
     <Compile Include="Message\Internals\DefaultEvent.cs" />
     <Compile Include="Message\Internals\DefaultHeartbeat.cs" />
+    <Compile Include="Message\Internals\DefaultMessageProducer.cs" />
     <Compile Include="Message\Internals\DefaultTransaction.cs" />
     <Compile Include="Message\Internals\MessageId.cs" />
     <Compile Include="Message\Internals\MessageIdFactory.cs" />
@@ -63,11 +67,12 @@
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
     <Compile Include="Message\Internals\NullTransaction.cs" />
     <Compile Include="Message\ITransaction.cs" />
+    <Compile Include="Message\Spi\IMessageManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Message\Spi\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
