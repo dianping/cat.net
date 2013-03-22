@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using Com.Dianping.Cat.Message.Spi;
+using Com.Dianping.Cat.Message.Spi.Codec;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
@@ -112,6 +114,17 @@ namespace Com.Dianping.Cat.Message.Internals
         protected void SetCompleted(bool completed)
         {
             _mCompleted = completed;
+        }
+
+        public override String ToString()
+        {
+            PlainTextMessageCodec codec = new PlainTextMessageCodec();
+            ChannelBuffer buf = new ChannelBuffer(8192);
+
+            codec.EncodeMessage(this, buf);
+            //buf.Reset();
+
+            return buf.ToString();
         }
     }
 }

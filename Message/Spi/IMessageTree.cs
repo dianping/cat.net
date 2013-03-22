@@ -20,13 +20,13 @@
         String MessageId { get; set; }
 
 
-        //String ParentMessageId { get; set; }
+        String ParentMessageId { get; set; }
 
 
-        //String RootMessageId { get; set; }
+        String RootMessageId { get; set; }
 
 
-        //String SessionToken { get; set; }
+        String SessionToken { get; set; }
 
 
         String ThreadGroupName { get; set; }

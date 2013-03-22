@@ -72,12 +72,17 @@
     <Compile Include="Message\Internals\NullEvent.cs" />
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
     <Compile Include="Message\Internals\NullTransaction.cs" />
+    <Compile Include="Message\IO\IMessageSender.cs" />
+    <Compile Include="Message\IO\TcpMessageSender.cs" />
     <Compile Include="Message\ITransaction.cs" />
+    <Compile Include="Message\Spi\ChannelBuffer.cs" />
+    <Compile Include="Message\Spi\Codec\PlainTextMessageCodec.cs" />
     <Compile Include="Message\Spi\IMessageManager.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Message\Spi\IMessageTree.cs" />
     <Compile Include="Message\Spi\Internals\DefaultMessageTree.cs" />
+    <Compile Include="Message\Spi\MessageCodec.cs" />
     <Compile Include="NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

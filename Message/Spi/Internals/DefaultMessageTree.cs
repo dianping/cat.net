@@ -1,4 +1,6 @@
-﻿namespace Com.Dianping.Cat.Message.Spi.Internals
+﻿using Com.Dianping.Cat.Message.Spi.Codec;
+
+namespace Com.Dianping.Cat.Message.Spi.Internals
 {
     using Message;
     using Spi;
@@ -8,9 +10,9 @@
     {
         private String _mMessageId;
 
-        //private String _mParentMessageId;
+        private String _mParentMessageId;
 
-        //private String _mRootMessageId;
+        private String _mRootMessageId;
 
         #region IMessageTree Members
 
@@ -53,31 +55,31 @@
             }
         }
 
-        //public String ParentMessageId
-        //{
-        //    get { return _mParentMessageId; }
-        //    set
-        //    {
-        //        if (!string.IsNullOrEmpty(value))
-        //        {
-        //            _mParentMessageId = value;
-        //        }
-        //    }
-        //}
+        public String ParentMessageId
+        {
+            get { return _mParentMessageId; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _mParentMessageId = value;
+                }
+            }
+        }
 
-        //public String RootMessageId
-        //{
-        //    get { return _mRootMessageId; }
-        //    set
-        //    {
-        //        if (!string.IsNullOrEmpty(value))
-        //        {
-        //            _mRootMessageId = value;
-        //        }
-        //    }
-        //}
+        public String RootMessageId
+        {
+            get { return _mRootMessageId; }
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _mRootMessageId = value;
+                }
+            }
+        }
 
-        //public string SessionToken { get; set; }
+        public string SessionToken { get; set; }
 
         public string ThreadGroupName { get; set; }
 
@@ -87,17 +89,17 @@
 
         #endregion
 
-        //public override String ToString()
-        //{
-        //    PlainTextMessageCodec codec = new PlainTextMessageCodec();
-        //    ChannelBuffer buf = new ChannelBuffer(8192);
+        public override String ToString()
+        {
+            PlainTextMessageCodec codec = new PlainTextMessageCodec();
+            ChannelBuffer buf = new ChannelBuffer(8192);
 
-        //    codec.Encode(this, buf);
+            codec.Encode(this, buf);
 
-        //    buf.Reset();
-        //    buf.Skip(4); // get rid of length
+            //buf.Reset();
+            buf.Skip(4); // get rid of length
 
-        //    return buf.ToString();
-        //}
+            return buf.ToString();
+        }
     }
 }

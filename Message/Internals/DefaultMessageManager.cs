@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Com.Dianping.Cat.Message.Io;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
@@ -24,6 +25,8 @@ namespace Com.Dianping.Cat.Message.Internals
 
         private bool _mFirstMessage = true;
         private String _mHostName;
+
+        private IMessageSender _mSender;
 
         #region 未用到的方法
 
@@ -70,7 +73,6 @@ namespace Com.Dianping.Cat.Message.Internals
 
         #endregion
 
-        //private TransportManager _mManager;
         //private IMessageStatistics _mStatistics;
 
         //private StatusUpdateTask _mStatusUpdateTask;
@@ -84,7 +86,8 @@ namespace Com.Dianping.Cat.Message.Internals
             _mHostName = NetworkInterfaceManager.GetLocalHostName();
 
             //_mStatistics = new DefaultMessageStatistics();
-            //_mManager = new TransportManager(_mClientConfig, _mStatistics);
+            _mSender = new TcpMessageSender(_mClientConfig);
+            _mSender.Initialize();
             _mFactory = new MessageIdFactory();
             //_mStatusUpdateTask = new StatusUpdateTask(_mStatistics);
 
@@ -164,20 +167,15 @@ namespace Com.Dianping.Cat.Message.Internals
 
         internal void Flush(IMessageTree tree)
         {
-            //if (_mManager != null)
-            //{
-            //    IMessageSender sender = _mManager.Sender;
+            if (_mSender != null)
+            {
+                _mSender.Send(tree);
 
-            //    if (sender != null && !ShouldThrottle(tree))
-            //    {
-            //        sender.Send(tree);
-
-            //        if (_mStatistics != null)
-            //        {
-            //            _mStatistics.OnSending(tree);
-            //        }
-            //    }
-            //}
+                //if (_mStatistics != null)
+                //{
+                //    _mStatistics.OnSending(tree);
+                //}
+            }
         }
 
         internal Context GetContext()
