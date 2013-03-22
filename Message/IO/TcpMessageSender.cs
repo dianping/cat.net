@@ -65,7 +65,7 @@ namespace Com.Dianping.Cat.Message.Io
         {
             lock (_mQueue)
             {
-                if (_mQueue.Count < 10000000)
+                if (_mQueue.Count < 10000)
                 {
                     _mQueue.Add(tree);
                 }
@@ -108,63 +108,69 @@ namespace Com.Dianping.Cat.Message.Io
 
         public void ChannelManagementTask(object o)
         {
-            while (_mActive)
+            while (true)
             {
-                if (_mActiveChannel != null && !_mActiveChannel.Connected)
+                if (_mActive)
                 {
-                    Logger.Warn("ChannelManagementTask中，Socket关闭");
-                    _mActiveIndex = _mClientConfig.Servers.Count;
-                }
-
-                for (int i = 0; i < _mActiveIndex; i++)
-                {
-                    TcpClient channel = CreateChannel(i);
-
-                    if (channel != null)
+                    if (_mActiveChannel != null && !_mActiveChannel.Connected)
                     {
-                        _mLastChannel = _mActiveChannel;
-                        _mActiveChannel = channel;
-                        _mActiveIndex = i;
-                        break;
+                        Logger.Warn("ChannelManagementTask中，Socket关闭");
+                        _mActiveIndex = _mClientConfig.Servers.Count;
                     }
-                }
 
-                Thread.Sleep(2*1000); // every 2 seconds
+                    for (int i = 0; i < _mActiveIndex; i++)
+                    {
+                        TcpClient channel = CreateChannel(i);
+
+                        if (channel != null)
+                        {
+                            _mLastChannel = _mActiveChannel;
+                            _mActiveChannel = channel;
+                            _mActiveIndex = i;
+                            break;
+                        }
+                    }
+
+                    Thread.Sleep(2*1000); // every 2 seconds
+                }
             }
         }
 
         public void AsynchronousSendTask(object o)
         {
-            while (_mActive)
+            while (true)
             {
-                while (_mQueue.Count == 0 || _mActiveChannel == null || !_mActiveChannel.Connected)
+                if (_mActive)
                 {
-                    if (_mActiveChannel != null && !_mActiveChannel.Connected)
-                        Logger.Warn("AsynchronousSendTask中，Socket关闭");
-                    Thread.Sleep(5*1000);
-                }
-
-                IMessageTree tree = null;
-
-                lock (_mQueue)
-                {
-                    foreach (IMessageTree t in _mQueue)
+                    while (_mQueue.Count == 0 || _mActiveChannel == null || !_mActiveChannel.Connected)
                     {
-                        tree = t;
-                        break;
+                        if (_mActiveChannel != null && !_mActiveChannel.Connected)
+                            Logger.Warn("AsynchronousSendTask中，Socket关闭");
+                        Thread.Sleep(5*1000);
                     }
 
-                    _mQueue.RemoveAt(0);
-                }
+                    IMessageTree tree = null;
 
-                try
-                {
-                    SendInternal(tree);
-                    if (tree != null) tree.Message = null;
-                }
-                catch (Exception t)
-                {
-                    Logger.Error("Error when sending message over TCP socket! Error: {0}", t);
+                    lock (_mQueue)
+                    {
+                        foreach (IMessageTree t in _mQueue)
+                        {
+                            tree = t;
+                            break;
+                        }
+
+                        _mQueue.RemoveAt(0);
+                    }
+
+                    try
+                    {
+                        SendInternal(tree);
+                        if (tree != null) tree.Message = null;
+                    }
+                    catch (Exception t)
+                    {
+                        Logger.Error("Error when sending message over TCP socket! Error: {0}", t);
+                    }
                 }
             }
         }
