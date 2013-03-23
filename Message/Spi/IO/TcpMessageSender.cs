@@ -25,7 +25,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
             _mClientConfig = clientConfig;
             _mStatistics = statistics;
             _mActive = true;
-            _mQueue = new List<IMessageTree>(10000);
+            _mQueue = new List<IMessageTree>(100000);
             _mCodec = new PlainTextMessageCodec();
         }
 
@@ -63,7 +63,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
         {
             lock (_mQueue)
             {
-                if (_mQueue.Count < 10000)
+                if (_mQueue.Count < 100000)
                 {
                     _mQueue.Add(tree);
                 }
@@ -128,9 +128,9 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                             break;
                         }
                     }
-
-                    Thread.Sleep(2*1000); // every 2 seconds
                 }
+
+                Thread.Sleep(2*1000); // every 2 seconds
             }
         }
 
@@ -169,6 +169,10 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                     {
                         Logger.Error("Error when sending message over TCP socket! Error: {0}", t);
                     }
+                }
+                else
+                {
+                    Thread.Sleep(5 * 1000);
                 }
             }
         }
