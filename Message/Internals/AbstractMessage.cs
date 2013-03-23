@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using Com.Dianping.Cat.Message.Spi;
 using Com.Dianping.Cat.Message.Spi.Codec;
+using Com.Dianping.Cat.Util;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
@@ -102,15 +102,6 @@ namespace Com.Dianping.Cat.Message.Internals
 
         #endregion
 
-        ///// <summary>
-        /////   TODO: 可以删除，没有用
-        ///// </summary>
-        ///// <param name="e"> </param>
-        //public void SetStatus(Exception e)
-        //{
-        //    _mStatus = e.GetType().FullName;
-        //}
-
         protected void SetCompleted(bool completed)
         {
             _mCompleted = completed;
@@ -122,7 +113,7 @@ namespace Com.Dianping.Cat.Message.Internals
             ChannelBuffer buf = new ChannelBuffer(8192);
 
             codec.EncodeMessage(this, buf);
-            //buf.Reset();
+            buf.Reset();
 
             return buf.ToString();
         }

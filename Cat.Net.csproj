@@ -48,43 +48,46 @@
     <Compile Include="Configuration\ClientConfig.cs" />
     <Compile Include="Configuration\Domain.cs" />
     <Compile Include="Configuration\Server.cs" />
-    <Compile Include="Logger.cs" />
+    <Compile Include="Util\Logger.cs" />
     <Compile Include="Message\IEvent.cs" />
     <Compile Include="Message\IHeartbeat.cs" />
     <Compile Include="Message\IMessage.cs" />
-    <Compile Include="Message\IMessageProducer.cs">
+    <Compile Include="Message\Spi\IMessageProducer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Message\Internals\AbstractMessage.cs" />
-    <Compile Include="Message\Internals\CatThreadLocal.cs">
+    <Compile Include="Util\CatThreadLocal.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Message\Internals\DefaultEvent.cs" />
     <Compile Include="Message\Internals\DefaultHeartbeat.cs" />
-    <Compile Include="Message\Internals\DefaultMessageManager.cs">
+    <Compile Include="Message\Spi\Internals\DefaultMessageManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Message\Internals\DefaultMessageProducer.cs" />
+    <Compile Include="Message\Spi\Internals\DefaultMessageProducer.cs" />
     <Compile Include="Message\Internals\DefaultTransaction.cs" />
     <Compile Include="Message\Internals\MessageId.cs" />
-    <Compile Include="Message\Internals\MessageIdFactory.cs" />
-    <Compile Include="Message\Internals\MilliSecondTimer.cs" />
+    <Compile Include="Message\Spi\Internals\MessageIdFactory.cs" />
+    <Compile Include="Util\MilliSecondTimer.cs" />
     <Compile Include="Message\Internals\NullEvent.cs" />
     <Compile Include="Message\Internals\NullHeartbeat.cs" />
     <Compile Include="Message\Internals\NullTransaction.cs" />
-    <Compile Include="Message\IO\IMessageSender.cs" />
-    <Compile Include="Message\IO\TcpMessageSender.cs" />
+    <Compile Include="Message\Spi\IO\IMessageSender.cs" />
+    <Compile Include="Message\Spi\IO\TcpMessageSender.cs" />
     <Compile Include="Message\ITransaction.cs" />
-    <Compile Include="Message\Spi\ChannelBuffer.cs" />
+    <Compile Include="Message\Spi\Codec\ChannelBuffer.cs" />
     <Compile Include="Message\Spi\Codec\PlainTextMessageCodec.cs" />
     <Compile Include="Message\Spi\IMessageManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Message\Spi\IMessageTree.cs" />
-    <Compile Include="Message\Spi\Internals\DefaultMessageTree.cs" />
-    <Compile Include="Message\Spi\MessageCodec.cs" />
-    <Compile Include="NetworkInterfaceManager.cs" />
+    <Compile Include="Message\Spi\IMessageStatistics.cs" />
+    <Compile Include="Message\IMessageTree.cs" />
+    <Compile Include="Message\Spi\Internals\DefaultMessageStatistics.cs" />
+    <Compile Include="Message\Internals\DefaultMessageTree.cs" />
+    <Compile Include="Message\Spi\Codec\IMessageCodec.cs" />
+    <Compile Include="Util\NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Message\Spi\Internals\StatusUpdateTask.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

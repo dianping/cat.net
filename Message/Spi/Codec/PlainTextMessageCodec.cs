@@ -1,14 +1,12 @@
-﻿namespace Com.Dianping.Cat.Message.Spi.Codec
-{
-    using Message;
-    using Message.Internals;
-    using Spi;
-    using Internals;
-    using System;
-    using System.Text;
-    using System.Globalization;
-    using System.Collections.Generic;
+﻿using Com.Dianping.Cat.Message.Internals;
+using Com.Dianping.Cat.Util;
+using System;
+using System.Text;
+using System.Globalization;
+using System.Collections.Generic;
 
+namespace Com.Dianping.Cat.Message.Spi.Codec
+{
     public class PlainTextMessageCodec : IMessageCodec
     {
         #region Policy enum

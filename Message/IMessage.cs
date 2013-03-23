@@ -1,7 +1,7 @@
-﻿namespace Com.Dianping.Cat.Message
-{
-    using System;
+﻿using System;
 
+namespace Com.Dianping.Cat.Message
+{
     /**
 	 * <p>
 	 * Message represents data collected during application runtime. It will be sent
@@ -96,13 +96,5 @@
 		 * @return
 		 */
         bool IsSuccess();
-
-        /**
-		 * Set the message status with exception class name.
-		 * 
-		 * @param e
-		 *           exception.
-		 */
-        //void SetStatus(Exception e);
     }
 }

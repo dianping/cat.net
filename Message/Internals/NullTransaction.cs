@@ -1,8 +1,7 @@
-﻿namespace Com.Dianping.Cat.Message.Internals
-{
-    using Message;
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Com.Dianping.Cat.Message.Internals
+{
     public class NullTransaction : AbstractMessage, ITransaction
     {
         private IList<IMessage> _mChildren;

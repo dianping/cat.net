@@ -1,8 +1,7 @@
-﻿namespace Com.Dianping.Cat.Message.Spi
-{
-    using Configuration;
-    using Message;
+﻿using Com.Dianping.Cat.Configuration;
 
+namespace Com.Dianping.Cat.Message.Spi
+{
     ///<summary>
     ///  Message manager to help build CAT message. <p>Notes: This method is reserved for internal usage only. Application developer
     ///                                               should never call this method directly.</p>
@@ -48,7 +47,7 @@
         void InitializeClient(ClientConfig config);
 
         ///<summary>
-        ///  Do cleanup for current thread environment in order to release resources in thread local objects. TODO: 貌似没有用到
+        ///  Do cleanup for current thread environment in order to release resources in thread local objects.
         ///</summary>
         void Reset();
 

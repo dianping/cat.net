@@ -1,9 +1,9 @@
-﻿namespace Com.Dianping.Cat.Message.Internals
-{
-    using Message;
-    using System;
-    using System.Collections.Generic;
+﻿using Com.Dianping.Cat.Util;
+using System;
+using System.Collections.Generic;
 
+namespace Com.Dianping.Cat.Message.Internals
+{
     public class DefaultTransaction : AbstractMessage, ITransaction
     {
         private readonly Action<ITransaction> _endCallBack;

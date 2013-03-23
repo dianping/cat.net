@@ -1,7 +1,7 @@
-﻿namespace Com.Dianping.Cat.Message
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Com.Dianping.Cat.Message
+{
     /**
 	 * <p>
 	 * <code>Transaction</code> is any interesting unit of work that takes time to

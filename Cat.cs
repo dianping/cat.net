@@ -1,14 +1,14 @@
-﻿namespace Com.Dianping.Cat
-{
-    using Configuration;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Xml;
-    using System.Linq;
-    using Message;
-    using Message.Internals;
-    using Message.Spi;
+﻿using Com.Dianping.Cat.Configuration;
+using Com.Dianping.Cat.Message.Spi;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
+using System.Linq;
+using Com.Dianping.Cat.Message.Spi.Internals;
+using Com.Dianping.Cat.Util;
 
+namespace Com.Dianping.Cat
+{
     public class Cat
     {
         private static readonly Cat Instance = new Cat();

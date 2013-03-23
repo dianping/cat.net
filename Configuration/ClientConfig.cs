@@ -1,7 +1,7 @@
-﻿namespace Com.Dianping.Cat.Configuration
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Com.Dianping.Cat.Configuration
+{
     /// <summary>
     ///   Cat客户端配置
     /// </summary>
@@ -16,7 +16,7 @@
         }
 
         /// <summary>
-        ///   是否是开发模式（TODO: 目前没用到）
+        ///   是否是开发模式
         /// </summary>
         public bool DevMode { get; set; }
 

@@ -1,14 +1,15 @@
 ﻿using System.Globalization;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
+    [Obsolete]
     public class MessageId
     {
         private readonly String _mDomain;
+
         private readonly int _mIndex;
 
         private readonly String _mIpAddressInHex;
@@ -23,24 +24,20 @@ namespace Com.Dianping.Cat.Message.Internals
             _mIndex = index;
         }
 
-
         public String Domain
         {
             get { return _mDomain; }
         }
-
 
         public int Index
         {
             get { return _mIndex; }
         }
 
-
         public String IpAddressInHex
         {
             get { return _mIpAddressInHex; }
         }
-
 
         public long Timestamp
         {
@@ -86,7 +83,6 @@ namespace Com.Dianping.Cat.Message.Internals
 
             throw new Exception("Invalid message id format: " + messageId);
         }
-
 
         public override String ToString()
         {
