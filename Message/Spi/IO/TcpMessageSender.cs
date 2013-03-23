@@ -110,9 +110,10 @@ namespace Com.Dianping.Cat.Message.Spi.IO
             {
                 if (_mActive)
                 {
-                    if (_mActiveChannel != null && !_mActiveChannel.Connected)
+                    if (_mActiveChannel == null || !_mActiveChannel.Connected)
                     {
-                        Logger.Warn("ChannelManagementTask中，Socket关闭");
+                        if (_mActiveChannel != null)
+                            Logger.Warn("ChannelManagementTask中，Socket关闭");
                         _mActiveIndex = _mClientConfig.Servers.Count;
                     }
 
@@ -130,7 +131,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                     }
                 }
 
-                Thread.Sleep(2*1000); // every 2 seconds
+                Thread.Sleep(5*1000); // every 2 seconds
             }
         }
 
@@ -172,7 +173,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                 }
                 else
                 {
-                    Thread.Sleep(5 * 1000);
+                    Thread.Sleep(5*1000);
                 }
             }
         }
