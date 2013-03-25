@@ -96,5 +96,13 @@ namespace Com.Dianping.Cat.Message
 		 * @return
 		 */
         bool IsSuccess();
+
+        /**
+		 * Set the message status with exception class name.
+		 * 
+		 * @param e
+		 *           exception.
+		 */
+        void SetStatus(Exception e);
     }
 }

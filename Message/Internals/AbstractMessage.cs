@@ -100,6 +100,11 @@ namespace Com.Dianping.Cat.Message.Internals
             return "0".Equals(_mStatus);
         }
 
+        public void SetStatus(Exception e)
+        {
+            _mStatus = e.GetType().FullName;
+        }
+
         #endregion
 
         protected void SetCompleted(bool completed)
