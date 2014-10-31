@@ -1,11 +1,12 @@
 ﻿using Com.Dianping.Cat.Configuration;
 using Com.Dianping.Cat.Message.Spi;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
-using System.Linq;
 using Com.Dianping.Cat.Message.Spi.Internals;
 using Com.Dianping.Cat.Util;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace Com.Dianping.Cat
 {
@@ -57,6 +58,11 @@ namespace Com.Dianping.Cat
         public static bool IsInitialized()
         {
             return Instance._mInitialized;
+        }
+
+        public static void RegisterHttpModule()
+        {
+            DynamicModuleUtility.RegisterModule(typeof(Com.Dianping.Cat.Web.CatHttpModule));
         }
 
         private static ClientConfig LoadClientConfig(string configFile)

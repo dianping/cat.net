@@ -12,6 +12,10 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
         {
             _mManager = manager;
         }
+        public String CreateMessageId()
+        {
+            return _mManager.GetMessageIdFactory().GetNextId();
+        }
 
         #region IMessageProducer Members
 
