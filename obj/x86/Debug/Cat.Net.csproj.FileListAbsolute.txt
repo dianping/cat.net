@@ -1,5 +1,0 @@
-E:\work\csharp\Cat.Net\bin\Debug\Cat.dll
-E:\work\csharp\Cat.Net\bin\Debug\Cat.pdb
-E:\work\csharp\Cat.Net\obj\x86\Debug\ResolveAssemblyReference.cache
-E:\work\csharp\Cat.Net\obj\x86\Debug\Cat.dll
-E:\work\csharp\Cat.Net\obj\x86\Debug\Cat.pdb
