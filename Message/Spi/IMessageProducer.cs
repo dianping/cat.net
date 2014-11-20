@@ -128,10 +128,6 @@ namespace Com.Dianping.Cat.Message.Spi
         ///<param name="name"> transaction name </param>
         ITransaction NewTransaction(String type, String name);
 
-        /// <summary>
-        /// Create MessageId
-        /// </summary>
-        /// <returns></returns>
         String CreateMessageId();
     }
 }

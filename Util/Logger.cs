@@ -27,7 +27,7 @@ namespace Com.Dianping.Cat.Util
 
         private static void Log(string severity, string pattern, params object[] args)
         {
-            string timestamp = new DateTime(MilliSecondTimer.CurrentTimeMicros()*10L).ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string timestamp = new DateTime(MilliSecondTimer.CurrentTimeMicros() * 10L).ToString("yyyy-MM-dd HH:mm:ss.fff");
             string message = string.Format(pattern, args);
             string line = "[" + timestamp + "] [" + severity + "] " + message;
 

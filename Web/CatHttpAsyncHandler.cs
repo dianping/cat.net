@@ -9,14 +9,14 @@ using System.Threading;
 
 namespace Com.Dianping.Cat.Web
 {
-    public class CatHttpHandler : IHttpHandler, IRequiresSessionState
+    public class CatHttpAsyncHandler : IHttpAsyncHandler, IRequiresSessionState
     {
-        public CatHttpHandler(IHttpHandler httpHandler)
+        public CatHttpAsyncHandler(IHttpAsyncHandler asyncHandler)
         {
-            this.handler = httpHandler;
+            this.handler = asyncHandler;
         }
 
-        private IHttpHandler handler;
+        public IHttpAsyncHandler handler;
 
         public bool IsReusable { get { return handler.IsReusable; } }
 
@@ -36,6 +36,16 @@ namespace Com.Dianping.Cat.Web
                 throw ex;
             }
             CatHelper.CompleteTrancation(tran);
+        }
+
+        public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
+        {
+            return handler.BeginProcessRequest(context, cb, extraData);
+        }
+
+        public void EndProcessRequest(IAsyncResult result)
+        {
+            handler.EndProcessRequest(result);
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Com.Dianping.Cat.Message.Internals
     {
         private IList<IMessage> _mChildren;
 
-        public NullTransaction() : base(null, null)
+        public NullTransaction()
+            : base(null, null)
         {
         }
 

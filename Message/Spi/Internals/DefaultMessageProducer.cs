@@ -12,6 +12,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
         {
             _mManager = manager;
         }
+
         public String CreateMessageId()
         {
             return _mManager.GetMessageIdFactory().GetNextId();
@@ -23,7 +24,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
         {
             var ignore = false;
             if (cause.Data.Contains("CatIgnore") && cause.Data["CatIgnore"] is bool)
-                ignore = (bool) (cause.Data["CatIgnore"]);
+                ignore = (bool)(cause.Data["CatIgnore"]);
 
             if (ignore) return;
 

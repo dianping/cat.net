@@ -2,7 +2,8 @@
 {
     public class NullHeartbeat : AbstractMessage, IHeartbeat
     {
-        public NullHeartbeat() : base(null, null)
+        public NullHeartbeat()
+            : base(null, null)
         {
         }
     }

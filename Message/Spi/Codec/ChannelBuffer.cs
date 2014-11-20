@@ -33,7 +33,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
                 {
                     return -1;
                 }
-                if ((byte) b == separator)
+                if ((byte)b == separator)
                 {
                     _mBuf.Position = oldPosition;
                     return count;
@@ -53,7 +53,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
         public int ReadableBytes()
         {
-            return (int) (_mBuf.Length - _mBuf.Position);
+            return (int)(_mBuf.Length - _mBuf.Position);
         }
 
         public int ReadBytes(byte[] data)
@@ -63,7 +63,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
         public byte ReadByte()
         {
-            return (byte) (_mBuf.ReadByte() & 0xFF);
+            return (byte)(_mBuf.ReadByte() & 0xFF);
         }
 
         public void WriteByte(byte b)
@@ -73,7 +73,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
         public void WriteByte(char c)
         {
-            _mWriter.Write((byte) (c & 0xFF));
+            _mWriter.Write((byte)(c & 0xFF));
         }
 
         public void WriteInt(int i)
@@ -112,10 +112,10 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
         {
             byte[] bytes = new byte[4];
 
-            bytes[3] = (byte) value;
-            bytes[2] = (byte) (value >> 8);
-            bytes[1] = (byte) (value >> 16);
-            bytes[0] = (byte) (value >> 24);
+            bytes[3] = (byte)value;
+            bytes[2] = (byte)(value >> 8);
+            bytes[1] = (byte)(value >> 16);
+            bytes[0] = (byte)(value >> 24);
             return bytes;
         }
 
@@ -131,7 +131,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
         public override string ToString()
         {
             byte[] data = _mBuf.ToArray();
-            int offset = (int) _mBuf.Position;
+            int offset = (int)_mBuf.Position;
             string str = Encoding.UTF8.GetString(data, offset, data.Length - offset);
 
             //ToArray本身就不为该Position，所以下一行代码多余

@@ -6,7 +6,7 @@
     public class Domain
     {
         private string _id = "Unknown";
-        private bool _mEnabled = true;
+        private bool _mEnabled = false;
 
         /// <summary>
         ///   当前系统的标识
@@ -23,7 +23,7 @@
         //public string Ip { get; set; }
 
         /// <summary>
-        ///   Cat日志是否开启，默认开启
+        ///   Cat日志是否开启，默认关闭
         /// </summary>
         public bool Enabled
         {

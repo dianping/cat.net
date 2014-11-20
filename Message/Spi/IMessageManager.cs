@@ -75,10 +75,6 @@ namespace Com.Dianping.Cat.Message.Spi
         ///<param name="transaction"> </param>
         void End(ITransaction transaction);
 
-        /// <summary>
-        /// get MessageIdFactory
-        /// </summary>
-        /// <returns></returns>
         MessageIdFactory GetMessageIdFactory();
     }
 }

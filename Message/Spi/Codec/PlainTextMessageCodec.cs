@@ -24,9 +24,9 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
         private const String ID = "PT1"; // plain text version 1
 
-        private const byte TAB = (byte) '\t'; // tab character
+        private const byte TAB = (byte)'\t'; // tab character
 
-        private const byte LF = (byte) '\n'; // line feed character
+        private const byte LF = (byte)'\n'; // line feed character
 
         private readonly BufferHelper _mBufferHelper;
 
@@ -224,7 +224,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
             while (buf.ReadableBytes() > 0)
             {
-                IMessage message = DecodeLine(buf, (ITransaction) parent, stack, tree);
+                IMessage message = DecodeLine(buf, (ITransaction)parent, stack, tree);
 
                 if (message is ITransaction)
                 {
@@ -273,11 +273,11 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
             BufferHelper helper = _mBufferHelper;
             int count = 0;
 
-            count += helper.Write(buf, (byte) type);
+            count += helper.Write(buf, (byte)type);
 
             if (type == 'T' && message is ITransaction)
             {
-                long duration = ((ITransaction) message).DurationInMillis;
+                long duration = ((ITransaction)message).DurationInMillis;
 
                 count += helper.Write(buf, _mDateHelper.Format(message.Timestamp + duration));
             }
@@ -301,7 +301,7 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
                 if (policy == Policy.WITH_DURATION && message is ITransaction)
                 {
-                    long duration0 = ((ITransaction) message).DurationInMicros;
+                    long duration0 = ((ITransaction)message).DurationInMicros;
 
                     count += helper.Write(buf, duration0.ToString(CultureInfo.InvariantCulture));
                     //以微秒为单位
@@ -403,15 +403,15 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
                             if (b == 't')
                             {
-                                data[i] = (byte) '\t';
+                                data[i] = (byte)'\t';
                             }
                             else if (b == 'r')
                             {
-                                data[i] = (byte) '\r';
+                                data[i] = (byte)'\r';
                             }
                             else if (b == 'n')
                             {
-                                data[i] = (byte) '\n';
+                                data[i] = (byte)'\n';
                             }
                             else
                             {
@@ -510,14 +510,14 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
         {
             public String Format(long timestamp)
             {
-                return new DateTime(timestamp*10000L).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                return new DateTime(timestamp * 10000L).ToString("yyyy-MM-dd HH:mm:ss.fff");
             }
 
             public long Parse(String str)
             {
                 DateTime dateTime = DateTime.ParseExact(str, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.CurrentCulture);
 
-                return dateTime.Ticks/10000L;
+                return dateTime.Ticks / 10000L;
             }
         }
 

@@ -11,13 +11,10 @@ namespace Com.Dianping.Cat.Web
 {
     public class CatHttpModule : IHttpModule
     {
-
         public void Init(HttpApplication context)
         {
             context.PostMapRequestHandler += context_PostMapRequestHandler;
         }
-
-
 
         void context_PostMapRequestHandler(object sender, EventArgs e)
         {
@@ -25,44 +22,16 @@ namespace Com.Dianping.Cat.Web
             {
                 return;
             }
-            try
-            {
-                var context = System.Web.HttpContext.Current;
-                var request = System.Web.HttpContext.Current.Request;
 
-                if (filter_Handler(context))//如果被过滤了，就直接跳过
-                    return;
+            var context = System.Web.HttpContext.Current;
 
-                var handler = new CatHttpHandler { Handler = context.Handler };
-                context.Handler = handler;
-            }
-            catch (Exception)
-            {
+            if (context == null || context.Handler == null)
+                return;
 
-            }
-        }
-
-
-
-        bool filter_Handler(HttpContext context)
-        {
-            var request = context.Request;
-            var handlerType = context.Handler.GetType();
-            var attibutes = handlerType.GetCustomAttributes(typeof(Attribute), false);
-
-            if (context == null)
-                return true;
-
-            if (context.Handler.GetType().FullName.Equals("System.Web.Handlers.TransferRequestHandler", StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            if (context.Handler == null && File.Exists(request.PhysicalPath))
-                return true;
-
-            if (attibutes.Any(p => p.GetType().FullName == "TongCheng.SOA.Interface.Attributes.SOABusiness"))
-                return true;
-
-            return false;
+            if (context.Handler is IHttpAsyncHandler)
+                context.Handler = new CatHttpAsyncHandler((IHttpAsyncHandler)context.Handler);
+            else
+                context.Handler = new CatHttpHandler(context.Handler);
         }
 
         public void Dispose()

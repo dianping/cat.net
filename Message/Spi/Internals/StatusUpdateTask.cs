@@ -24,7 +24,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
         private static int GetPhisicalMemory()
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(); //用于查询一些如系统信息的管理对象 
-            searcher.Query = new SelectQuery("Win32_PhysicalMemory ", "", new[] {"Capacity"}); //设置查询条件 
+            searcher.Query = new SelectQuery("Win32_PhysicalMemory ", "", new[] { "Capacity" }); //设置查询条件 
             ManagementObjectCollection collection = searcher.Get(); //获取内存容量 
             ManagementObjectCollection.ManagementObjectEnumerator em = collection.GetEnumerator();
 
@@ -44,7 +44,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                     }
                 }
             }
-            return (int) (capacity/1024/1024);
+            return (int)(capacity / 1024 / 1024);
         }
 
         public void Run(object o)
@@ -67,12 +67,12 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                 //获取当前进程CPU利用率
                 var tmpRate =
                     Math.Round(
-                        currentProcess.UserProcessorTime.TotalMilliseconds*100/
+                        currentProcess.UserProcessorTime.TotalMilliseconds * 100 /
                         currentProcess.TotalProcessorTime.TotalMilliseconds, 2);
                 var cpuUsage = tmpRate + "%"; //CPU
                 //获取当前进程内存占用
-                var memoryUsage = (currentProcess.WorkingSet64/1024/1024).ToString(CultureInfo.InvariantCulture) + "M (" +
-                                  (currentProcess.WorkingSet64/1024).ToString(CultureInfo.InvariantCulture) + "KB)";
+                var memoryUsage = (currentProcess.WorkingSet64 / 1024 / 1024).ToString(CultureInfo.InvariantCulture) + "M (" +
+                                  (currentProcess.WorkingSet64 / 1024).ToString(CultureInfo.InvariantCulture) + "KB)";
                 //占用内存
                 //获取当前进程的线程数
                 var threadCount = currentProcess.Threads.Count; //线程
@@ -96,8 +96,8 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
 
                 var bestThreadInfo = string.Empty;
                 //最佳线程数为
-                var bestThreadCountTmp = currentProcess.TotalProcessorTime.TotalMilliseconds/
-                                         (currentProcess.UserProcessorTime.TotalMilliseconds/threadCount);
+                var bestThreadCountTmp = currentProcess.TotalProcessorTime.TotalMilliseconds /
+                                         (currentProcess.UserProcessorTime.TotalMilliseconds / threadCount);
                 bestThreadInfo += "最佳线程数=" + bestThreadCountTmp + ",";
 
                 //如果需要增加线程
@@ -105,7 +105,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                 {
                     if (tmpRate < 90 && bestThreadCountTmp > 400)
                     {
-                        int bestThreadCount = (int) Math.Floor(bestThreadCountTmp);
+                        int bestThreadCount = (int)Math.Floor(bestThreadCountTmp);
                         //ThreadPool.SetMinThreads(bestThreadCount, bestThreadCount);
                         ThreadPool.SetMaxThreads(bestThreadCount, bestThreadCount);
                         bestThreadInfo += "重设线程池的MaxThreads=" + bestThreadCount + ",";
@@ -131,7 +131,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
 
                 sb.AppendLine("MemoryAvailable=" + available + "M");
                 sb.AppendLine("MemoryUsed=" + (phisicalMemory - available) + "M，" +
-                              Math.Round(((phisicalMemory - available)/phisicalMemory*100), 2) + "％");
+                              Math.Round(((phisicalMemory - available) / phisicalMemory * 100), 2) + "％");
 
                 PerformanceCounter cpuCounter = new PerformanceCounter
                                                     {
@@ -175,7 +175,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                 sb2.AppendLine("&MemoryCapacity=" + phisicalMemory + "M");
                 sb2.AppendLine("&MemoryAvailable=" + available + "M");
                 sb2.AppendLine("&MemoryUsed=" + (phisicalMemory - available) + "M，" +
-                               Math.Round(((phisicalMemory - available)/phisicalMemory*100), 2) + "％");
+                               Math.Round(((phisicalMemory - available) / phisicalMemory * 100), 2) + "％");
                 sb2.AppendLine("&总CPU利用率=" + cpuCounter.NextValue() + "%");
 
                 Cat.GetProducer().LogHeartbeat("Cat", "Heartbeat", "0", sb2.ToString());

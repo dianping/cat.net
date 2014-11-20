@@ -5,6 +5,7 @@ using Com.Dianping.Cat.Util;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
+    [Serializable]
     public abstract class AbstractMessage : IMessage
     {
         private readonly String _mName;
@@ -50,8 +51,8 @@ namespace Com.Dianping.Cat.Message.Internals
         /// </summary>
         public long Timestamp
         {
-            get { return TimestampInMicros/1000L; }
-            set { TimestampInMicros = value*1000L; }
+            get { return TimestampInMicros / 1000L; }
+            set { TimestampInMicros = value * 1000L; }
         }
 
         public String Type

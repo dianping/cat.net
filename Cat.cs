@@ -2,7 +2,6 @@
 using Com.Dianping.Cat.Message.Spi;
 using Com.Dianping.Cat.Message.Spi.Internals;
 using Com.Dianping.Cat.Util;
-using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,6 +33,12 @@ namespace Com.Dianping.Cat
             return Instance._mProducer;
         }
 
+        public static void Initialize()
+        {
+            var path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "App_Data\\TCConfig\\CatConfig.xml");
+            Initialize(path);
+        }
+
         public static void Initialize(string configFile)
         {
             if (Instance._mInitialized)
@@ -51,18 +56,17 @@ namespace Com.Dianping.Cat
             Instance._mProducer = new DefaultMessageProducer(manager);
             Instance._mManager = manager;
             Instance._mInitialized = true;
-
             Logger.Info("Cat .Net Client initialized.");
         }
 
         public static bool IsInitialized()
         {
-            return Instance._mInitialized;
-        }
-
-        public static void RegisterHttpModule()
-        {
-            DynamicModuleUtility.RegisterModule(typeof(Com.Dianping.Cat.Web.CatHttpModule));
+            bool isInitialized = Instance._mInitialized;
+            if (isInitialized && !Instance._mManager.HasContext())
+            {
+                Instance._mManager.Setup();
+            }
+            return isInitialized;
         }
 
         private static ClientConfig LoadClientConfig(string configFile)
@@ -95,10 +99,11 @@ namespace Com.Dianping.Cat
             }
             else
             {
-                Logger.Warn("Config file({0}) not found, using localhost:2280 instead.", configFile);
+                Logger.Warn("Config file({0}) not found.", configFile);
+                //Logger.Warn("Config file({0}) not found, using localhost:2280 instead.", configFile);
 
-                config.Domain = BuildDomain(null);
-                config.Servers.Add(new Server("localhost", 2280));
+                //config.Domain = BuildDomain(null);
+                //config.Servers.Add(new Server("localhost", 2280));
             }
 
             return config;
@@ -111,12 +116,12 @@ namespace Com.Dianping.Cat
                 return new Domain();
             }
 
-            XmlElement node = (XmlElement) nodes[0];
+            XmlElement node = (XmlElement)nodes[0];
             return new Domain
                        {
                            Id = GetStringProperty(node, "id", "Unknown"),
                            //Ip = GetStringProperty(node, "ip", null),
-                           Enabled = GetBooleanProperty(node, "enabled", true)
+                           Enabled = GetBooleanProperty(node, "enabled", false)
                        };
         }
 
@@ -126,15 +131,15 @@ namespace Com.Dianping.Cat
 
             if (nodes != null && nodes.Count > 0)
             {
-                XmlElement first = (XmlElement) nodes[0];
+                XmlElement first = (XmlElement)nodes[0];
                 XmlNodeList serverNodes = first.GetElementsByTagName("server");
 
                 foreach (XmlNode node in serverNodes)
                 {
-                    XmlElement serverNode = (XmlElement) node;
+                    XmlElement serverNode = (XmlElement)node;
                     string ip = GetStringProperty(serverNode, "ip", "localhost");
                     int port = GetIntProperty(serverNode, "port", 2280);
-                    Server server = new Server(ip, port) {Enabled = GetBooleanProperty(serverNode, "enabled", true)};
+                    Server server = new Server(ip, port) { Enabled = GetBooleanProperty(serverNode, "enabled", true) };
 
                     servers.Add(server);
                 }
@@ -195,5 +200,6 @@ namespace Com.Dianping.Cat
 
             return defaultValue;
         }
+
     }
 }

@@ -9,13 +9,7 @@ namespace Com.Dianping.Cat.Util
 {
     public static class AppEnv
     {
-
-        static AppEnv()
-        {
-            IP = getLocalIP();
-        }
-
-        public static string IP { get; private set; }
+        public static string IP { get { return getLocalIP(); } }
 
         private static string getLocalIP()
         {
@@ -43,6 +37,15 @@ namespace Com.Dianping.Cat.Util
                 {
                     return items[0];
                 }
+            }
+            return request.ServerVariables["REMOTE_ADDR"];
+        }
+
+        public static string GetRemoteIp(HttpRequest request)
+        {
+            if (request == null)
+            {
+                return string.Empty;
             }
             return request.ServerVariables["REMOTE_ADDR"];
         }

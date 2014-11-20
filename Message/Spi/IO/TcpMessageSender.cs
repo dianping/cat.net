@@ -70,14 +70,14 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                 else
                 {
                     // throw it away since the queue is full
-                    _mErrors ++;
+                    _mErrors++;
 
                     if (_mStatistics != null)
                     {
                         _mStatistics.OnOverflowed(tree);
                     }
 
-                    if (_mErrors%100 == 0)
+                    if (_mErrors % 100 == 0)
                     {
                         Logger.Warn("Can't send message to cat-server due to queue's full! Count: " + _mErrors);
                     }
@@ -131,7 +131,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                     }
                 }
 
-                Thread.Sleep(5*1000); // every 2 seconds
+                Thread.Sleep(5 * 1000); // every 2 seconds
             }
         }
 
@@ -145,7 +145,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                     {
                         if (_mActiveChannel != null && !_mActiveChannel.Connected)
                             Logger.Warn("AsynchronousSendTask中，Socket关闭");
-                        Thread.Sleep(5*1000);
+                        Thread.Sleep(5 * 1000);
                     }
 
                     IMessageTree tree = null;
@@ -173,7 +173,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
                 }
                 else
                 {
-                    Thread.Sleep(5*1000);
+                    Thread.Sleep(5 * 1000);
                 }
             }
         }
@@ -228,7 +228,7 @@ namespace Com.Dianping.Cat.Message.Spi.IO
             TcpClient socket = new TcpClient();
 
             socket.NoDelay = true;
-            socket.ReceiveTimeout = 2*1000; // 2 seconds
+            socket.ReceiveTimeout = 2 * 1000; // 2 seconds
 
             string ip = server.Ip;
             int port = server.Port;

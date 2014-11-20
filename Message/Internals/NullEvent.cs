@@ -2,7 +2,8 @@
 {
     public class NullEvent : AbstractMessage, IEvent
     {
-        public NullEvent() : base(null, null)
+        public NullEvent()
+            : base(null, null)
         {
         }
     }

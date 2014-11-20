@@ -14,7 +14,7 @@ namespace Com.Dianping.Cat.Util
                 int threadId = Thread.CurrentThread.ManagedThreadId;
                 object value = _mValues[threadId];
 
-                return (T) value;
+                return (T)value;
             }
             set
             {
