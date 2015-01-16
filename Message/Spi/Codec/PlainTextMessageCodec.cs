@@ -113,103 +113,112 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
                                                Stack<ITransaction> stack, IMessageTree tree)
         {
             BufferHelper helper = _mBufferHelper;
-            byte identifier = buf.ReadByte();
+            char identifier = (char)buf.ReadByte();
             String timestamp = helper.Read(buf, TAB);
             String type = helper.Read(buf, TAB);
             String name = helper.Read(buf, TAB);
-
-            if (identifier == 'E')
+            switch (identifier)
             {
-                IMessage evt = new DefaultEvent(type, name);
-                String status = helper.Read(buf, TAB);
-                String data = helper.ReadRaw(buf, TAB);
+                case 't':
+                    IMessage transaction = new DefaultTransaction(type, name, null);
 
-                helper.Read(buf, LF); // get rid of line feed
-                evt.Timestamp = _mDateHelper.Parse(timestamp);
-                evt.Status = status;
-                evt.AddData(data);
+                    helper.Read(buf, LF); // get rid of line feed
+                    transaction.Timestamp = _mDateHelper.Parse(timestamp);
 
-                if (parent != null)
-                {
-                    parent.AddChild(evt);
-                    return parent;
-                }
-                return evt;
+                    if (parent != null)
+                    {
+                        parent.AddChild(transaction);
+                    }
+
+                    stack.Push(parent);
+                    return transaction;
+                case 'A':
+                    DefaultTransaction tran = new DefaultTransaction(type, name, null);
+                    String status = helper.Read(buf, TAB);
+                    String duration = helper.Read(buf, TAB);
+                    String data = helper.ReadRaw(buf, TAB);
+
+                    helper.Read(buf, LF); // get rid of line feed
+                    tran.Timestamp = _mDateHelper.Parse(timestamp);
+                    tran.Status = status;
+                    tran.AddData(data);
+
+                    long d = Int64.Parse(duration.Substring(0, duration.Length - 2), NumberStyles.Integer);
+
+                    tran.DurationInMicros = d;
+
+                    if (parent != null)
+                    {
+                        parent.AddChild(tran);
+                        return parent;
+                    }
+                    return tran;
+                case 'T':
+                    String transactionStatus = helper.Read(buf, TAB);
+                    String transactionDuration = helper.Read(buf, TAB);
+                    String transactionData = helper.ReadRaw(buf, TAB);
+
+                    helper.Read(buf, LF); // get rid of line feed
+                    parent.Status = transactionStatus;
+                    parent.AddData(transactionData);
+
+                    long transactionD = Int64.Parse(transactionDuration.Substring(0, transactionDuration.Length - 2), NumberStyles.Integer);
+
+                    parent.DurationInMicros = transactionD;
+
+                    return stack.Pop();
+                case 'E':
+                    DefaultEvent evt = new DefaultEvent(type, name);
+                    String eventStatus = helper.Read(buf, TAB);
+                    String eventData = helper.ReadRaw(buf, TAB);
+
+                    helper.Read(buf, LF); // get rid of line feed
+                    evt.Timestamp = _mDateHelper.Parse(timestamp);
+                    evt.Status = eventStatus;
+                    evt.AddData(eventData);
+
+                    if (parent != null)
+                    {
+                        parent.AddChild(evt);
+                        return parent;
+                    }
+                    return evt;
+                case 'M':
+                    DefaultMetric metric = new DefaultMetric(type, name);
+                    String metricStatus = helper.Read(buf, TAB);
+                    String metricData = helper.ReadRaw(buf, TAB);
+
+                    helper.Read(buf, LF);
+                    metric.Timestamp = _mDateHelper.Parse(timestamp);
+                    metric.Status = metricStatus;
+                    metric.AddData(metricData);
+
+                    if (parent != null)
+                    {
+                        parent.AddChild(metric);
+                        return parent;
+                    }
+                    return metric;
+                case 'H':
+                    DefaultHeartbeat heartbeat = new DefaultHeartbeat(type, name);
+                    String heartbeatStatus = helper.Read(buf, TAB);
+                    String heartbeatData = helper.ReadRaw(buf, TAB);
+
+                    helper.Read(buf, LF); // get rid of line feed
+                    heartbeat.Timestamp = _mDateHelper.Parse(timestamp);
+                    heartbeat.Status = heartbeatStatus;
+                    heartbeat.AddData(heartbeatData);
+
+                    if (parent != null)
+                    {
+                        parent.AddChild(heartbeat);
+                        return parent;
+                    }
+                    return heartbeat;
             }
-            if (identifier == 'H')
-            {
-                IMessage heartbeat = new DefaultHeartbeat(type, name);
-                String status0 = helper.Read(buf, TAB);
-                String data1 = helper.ReadRaw(buf, TAB);
 
-                helper.Read(buf, LF); // get rid of line feed
-                heartbeat.Timestamp = _mDateHelper.Parse(timestamp);
-                heartbeat.Status = status0;
-                heartbeat.AddData(data1);
-
-                if (parent != null)
-                {
-                    parent.AddChild(heartbeat);
-                    return parent;
-                }
-                return heartbeat;
-            }
-            if (identifier == 't')
-            {
-                IMessage transaction = new DefaultTransaction(type, name,
-                                                              null);
-
-                helper.Read(buf, LF); // get rid of line feed
-                transaction.Timestamp = _mDateHelper.Parse(timestamp);
-
-                if (parent != null)
-                {
-                    parent.AddChild(transaction);
-                }
-
-                stack.Push(parent);
-                return transaction;
-            }
-            if (identifier == 'A')
-            {
-                ITransaction transaction2 = new DefaultTransaction(type, name, null);
-                String status3 = helper.Read(buf, TAB);
-                String duration = helper.Read(buf, TAB);
-                String data4 = helper.ReadRaw(buf, TAB);
-
-                helper.Read(buf, LF); // get rid of line feed
-                transaction2.Timestamp = _mDateHelper.Parse(timestamp);
-                transaction2.Status = status3;
-                transaction2.AddData(data4);
-
-                long d = Int64.Parse(duration.Substring(0, duration.Length - 2), NumberStyles.Integer);
-                transaction2.DurationInMicros = d;
-
-                if (parent != null)
-                {
-                    parent.AddChild(transaction2);
-                    return parent;
-                }
-                return transaction2;
-            }
-            if (identifier == 'T')
-            {
-                String status5 = helper.Read(buf, TAB);
-                String duration6 = helper.Read(buf, TAB);
-                String data7 = helper.ReadRaw(buf, TAB);
-
-                helper.Read(buf, LF); // get rid of line feed
-                parent.Status = status5;
-                parent.AddData(data7);
-
-                long d8 = Int64.Parse(
-                    duration6.Substring(0, duration6.Length - 2),
-                    NumberStyles.Integer);
-                parent.DurationInMicros = d8;
-
-                return stack.Pop();
-            }
             Logger.Error("Unknown identifier(" + identifier + ") of message: " + buf);
+            //throw new Exception("Unknown identifier int name"); //java版的抛出异常
 
             // unknown message, ignore it
             return parent;
@@ -320,16 +329,12 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
         public int EncodeMessage(IMessage message, ChannelBuffer buf)
         {
-            if (message is IEvent)
+            if (message is ITransaction)
             {
-                return EncodeLine(message, buf, 'E', Policy.DEFAULT);
-            }
-            var transaction = message as ITransaction;
-            if (transaction != null)
-            {
+                var transaction = message as ITransaction;
                 IList<IMessage> children = transaction.Children;
 
-                if ((children.Count == 0))
+                if (children.Count == 0)
                 {
                     return EncodeLine(transaction, buf, 'A', Policy.WITH_DURATION);
                 }
@@ -349,11 +354,19 @@ namespace Com.Dianping.Cat.Message.Spi.Codec
 
                 return count;
             }
+            if (message is IEvent)
+            {
+                return EncodeLine(message, buf, 'E', Policy.DEFAULT);
+            }
             if (message is IHeartbeat)
             {
                 return EncodeLine(message, buf, 'H', Policy.DEFAULT);
             }
-            throw new Exception("Unsupported message type: " + message.Type + ".");
+            if (message is IMetric)
+            {
+                return EncodeLine(message, buf, 'M', Policy.DEFAULT);
+            }
+            throw new Exception(string.Format("Unsupported message type: {0}.", message.Type));
         }
 
         #region Nested type: BufferHelper

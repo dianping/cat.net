@@ -31,7 +31,7 @@ namespace Com.Dianping.Cat.Message.Internals
 
         public String Data
         {
-            get { return _mData == null ? "" : _mData.ToString(); }
+            get { return _mData == null || _mData.Length == 0 ? string.Empty : _mData.ToString(); }
         }
 
         public String Name
@@ -68,7 +68,7 @@ namespace Com.Dianping.Cat.Message.Internals
             }
             else
             {
-                _mData.Append(keyValuePairs);
+                _mData.Append('&').Append(keyValuePairs);
             }
         }
 

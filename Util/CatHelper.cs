@@ -24,7 +24,7 @@ namespace Com.Dianping.Cat.Util
             {
                 var tran = Cat.GetProducer().NewTransaction(type, name);
                 tran.Status = "0";
-                Cat.GetProducer().LogEvent(type, request.RequestUri.AbsolutePath, "0", request.RequestUri.ToString());
+                LogEvent(type, request.RequestUri.AbsolutePath, "0", request.RequestUri.ToString());
                 var tree = Cat.GetManager().ThreadLocalMessageTree;
                 if (tree == null)
                 {
@@ -34,7 +34,7 @@ namespace Com.Dianping.Cat.Util
                 string serverMessageId = Cat.GetProducer().CreateMessageId();
                 string rootMessageId = (tree.RootMessageId ?? tree.MessageId);
                 string currentMessageId = tree.MessageId;
-                Cat.GetProducer().LogEvent("RemoteCall", "HttpRequest", "0", serverMessageId);
+                LogEvent("RemoteCall", "HttpRequest", "0", serverMessageId);
 
                 request.Headers.Add(CatHelper.CatRootId, rootMessageId);
                 request.Headers.Add(CatHelper.CatParentId, currentMessageId);
@@ -118,11 +118,45 @@ namespace Com.Dianping.Cat.Util
             }
         }
 
-        public static void AddLogEvent(string type, string name)
+        public static void LogEvent(string type, string name, string status = "0", string nameValuePairs = null)
         {
             if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
                 return;
-            Cat.GetProducer().LogEvent(type, name, "0", null);
+            Cat.GetProducer().LogEvent(type, name, status, nameValuePairs);
+        }
+
+        public static void LogError(Exception ex)
+        {
+            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
+                return;
+            Cat.GetProducer().LogError(ex);
+        }
+
+        public static void LogHeartbeat(string type, string name, string status = "0", string nameValuePairs = null)
+        {
+            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
+                return;
+            Cat.GetProducer().LogHeartbeat(type, name, status, nameValuePairs);
+        }
+
+        public static void LogMetricForCount(string name, int quantity = 1)
+        {
+            LogMetricInternal(name, "C", quantity.ToString());
+        }
+
+        public static void LogMetricForDuration(string name, double value)
+        {
+            LogMetricInternal(name, "T", String.Format("{0:F}", value));
+        }
+
+        public static void LogMetricForSum(string name, double value)
+        {
+            LogMetricInternal(name, "S", String.Format("{0:F}", value));
+        }
+
+        public static void LogMetricForSum(string name, double sum, int quantity)
+        {
+            LogMetricInternal(name, "S,C", String.Format("{0},{1:F}", sum, quantity));
         }
 
         public static string GetRootMessageId()
@@ -181,6 +215,14 @@ namespace Com.Dianping.Cat.Util
             }
         }
 
+        private static void LogMetricInternal(string name, string status, string keyValuePairs = null)
+        {
+            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
+                return;
+            Cat.GetProducer().LogMetric(name, status, keyValuePairs);
+        }
+
+        #region url info
         private static string getURLServerValue(HttpRequest request)
         {
             if (request == null)
@@ -217,5 +259,7 @@ namespace Com.Dianping.Cat.Util
             var headerKey = request.ServerVariables.AllKeys.Where(p => p.Equals(key, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             return request.ServerVariables[headerKey] ?? "null";
         }
+        #endregion
+
     }
 }

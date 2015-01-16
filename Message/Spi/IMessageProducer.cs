@@ -83,6 +83,8 @@ namespace Com.Dianping.Cat.Message.Spi
     ///</summary>
     public interface IMessageProducer
     {
+        String CreateMessageId();
+
         ///<summary>
         ///  Log an error.
         ///</summary>
@@ -107,6 +109,14 @@ namespace Com.Dianping.Cat.Message.Spi
         ///<param name="nameValuePairs"> name value pairs in the format of "a=1&b=2&..." </param>
         void LogHeartbeat(String type, String name, String status, String nameValuePairs);
 
+        /// <summary>
+        /// Log a metric in one shot.
+        /// </summary>
+        /// <param name="name">metric name</param>
+        /// <param name="status">"0" means success, otherwise means error code</param>
+        /// <param name="nameValuePairs">name value pairs in the format of "a=1&b=2&..."</param>
+        void LogMetric(String name, String status, String nameValuePairs);
+
         ///<summary>
         ///  Create a new event with given type and name.
         ///</summary>
@@ -128,6 +138,12 @@ namespace Com.Dianping.Cat.Message.Spi
         ///<param name="name"> transaction name </param>
         ITransaction NewTransaction(String type, String name);
 
-        String CreateMessageId();
+        ///<summary>
+        ///  Create a new metric with given type and name.
+        ///</summary>
+        ///<param name="type"> metric type </param>
+        ///<param name="name"> metric name </param>
+        IMetric NewMetric(String type, String name);
+
     }
 }

@@ -77,6 +77,20 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
             heartbeat.Complete();
         }
 
+        public virtual void LogMetric(String name, String status, String nameValuePairs)
+        {
+            String type = string.Empty;
+            IMetric metric = NewMetric(type, name);
+
+            if (!string.IsNullOrWhiteSpace(nameValuePairs))
+            {
+                metric.AddData(nameValuePairs);
+            }
+
+            metric.Status = status;
+            metric.Complete();
+        }
+
         public virtual IEvent NewEvent(String type, String name)
         {
             if (!_mManager.HasContext())
@@ -129,6 +143,30 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
             return new NullTransaction();
         }
 
+        /// <summary>
+        /// new metric
+        /// </summary>
+        /// <param name="type">group</param>
+        /// <param name="name">key</param>
+        public virtual IMetric NewMetric(String type, String name)
+        {
+            // this enable CAT client logging cat message without explicit setup
+            if (!_mManager.HasContext())
+            {
+                _mManager.Setup();
+            }
+
+            if (_mManager.CatEnabled)
+            {
+                IMetric metric = new DefaultMetric(string.IsNullOrWhiteSpace(type) ? string.Empty : type, name);
+
+                _mManager.Add(metric);
+                return metric;
+            }
+            return new NullMetric();
+        }
+
         #endregion
+
     }
 }
