@@ -50,6 +50,9 @@
     <Compile Include="Configuration\ClientConfig.cs" />
     <Compile Include="Configuration\Domain.cs" />
     <Compile Include="Configuration\Server.cs" />
+    <Compile Include="Message\IMetric.cs" />
+    <Compile Include="Message\Internals\DefaultMetric.cs" />
+    <Compile Include="Message\Internals\NullMetric.cs" />
     <Compile Include="Util\AppEnv.cs" />
     <Compile Include="Util\CatHelper.cs" />
     <Compile Include="Util\Logger.cs" />
