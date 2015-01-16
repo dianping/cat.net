@@ -156,7 +156,7 @@ namespace Com.Dianping.Cat.Util
 
         public static void LogMetricForSum(string name, double sum, int quantity)
         {
-            LogMetricInternal(name, "S,C", String.Format("{0},{1:F}", sum, quantity));
+            LogMetricInternal(name, "S,C", String.Format("{0},{1:F}", quantity, sum));
         }
 
         public static string GetRootMessageId()
