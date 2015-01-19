@@ -113,7 +113,7 @@ namespace Com.Dianping.Cat
             return Cat.GetProducer().NewEvent(type, name);
         }
 
-        public static IHeartbeat Neweartbeat(string type,string name)
+        public static IHeartbeat NewHeartbeat(string type,string name)
         {
             return Cat.GetProducer().NewHeartbeat(type, name);
         }
