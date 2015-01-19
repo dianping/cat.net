@@ -1,7 +1,9 @@
 ﻿using Com.Dianping.Cat.Configuration;
+using Com.Dianping.Cat.Message;
 using Com.Dianping.Cat.Message.Spi;
 using Com.Dianping.Cat.Message.Spi.Internals;
 using Com.Dianping.Cat.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,14 +35,10 @@ namespace Com.Dianping.Cat
             return Instance._mProducer;
         }
 
-        public static void Initialize()
+        public static void Initialize(string configFile = null)
         {
-            var path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "App_Data\\TCConfig\\CatConfig.xml");
-            Initialize(path);
-        }
-
-        public static void Initialize(string configFile)
-        {
+            if (string.IsNullOrWhiteSpace(configFile))
+                configFile = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "App_Data\\TCConfig\\CatConfig.xml");
             if (Instance._mInitialized)
             {
                 Logger.Warn("Cat can't initialize again with config file(%s), IGNORED!", configFile);
@@ -68,6 +66,65 @@ namespace Com.Dianping.Cat
             }
             return isInitialized;
         }
+
+        #region Log
+
+        public static void LogError(Exception ex)
+        {
+            Cat.GetProducer().LogError(ex);
+        }
+
+        public static void LogEvent(string type, string name, string status = "0", string nameValuePairs = null)
+        {
+            Cat.GetProducer().LogEvent(type, name, status, nameValuePairs);
+        }
+
+        public static void LogHeartbeat(string type, string name, string status = "0", string nameValuePairs = null)
+        {
+            Cat.GetProducer().LogHeartbeat(type, name, status, nameValuePairs);
+        }
+
+        public static void LogMetricForCount(string name, int quantity = 1)
+        {
+            LogMetricInternal(name, "C", quantity.ToString());
+        }
+
+        public static void LogMetricForDuration(string name, double value)
+        {
+            LogMetricInternal(name, "T", String.Format("{0:F}", value));
+        }
+
+        public static void LogMetricForSum(string name, double sum, int quantity)
+        {
+            LogMetricInternal(name, "S,C", String.Format("{0},{1:F}", quantity, sum));
+        }
+
+        private static void LogMetricInternal(string name, string status, string keyValuePairs = null)
+        {
+            Cat.GetProducer().LogMetric(name, status, keyValuePairs);
+        }
+
+        #endregion
+
+        #region New message
+
+        public static IEvent NewEvent(string type, string name)
+        {
+            return Cat.GetProducer().NewEvent(type, name);
+        }
+
+        public static IHeartbeat Neweartbeat(string type,string name)
+        {
+            return Cat.GetProducer().NewHeartbeat(type, name);
+        }
+
+        public static ITransaction NewTransaction(string type, string name)
+        {
+            return Cat.GetProducer().NewTransaction(type, name);
+        }
+        #endregion
+
+        #region 配置文件属性获取
 
         private static ClientConfig LoadClientConfig(string configFile)
         {
@@ -118,11 +175,11 @@ namespace Com.Dianping.Cat
 
             XmlElement node = (XmlElement)nodes[0];
             return new Domain
-                       {
-                           Id = GetStringProperty(node, "id", "Unknown"),
-                           //Ip = GetStringProperty(node, "ip", null),
-                           Enabled = GetBooleanProperty(node, "enabled", false)
-                       };
+            {
+                Id = GetStringProperty(node, "id", "Unknown"),
+                //Ip = GetStringProperty(node, "ip", null),
+                Enabled = GetBooleanProperty(node, "enabled", false)
+            };
         }
 
         private static IEnumerable<Server> BuildServers(XmlNodeList nodes)
@@ -200,6 +257,7 @@ namespace Com.Dianping.Cat
 
             return defaultValue;
         }
+        #endregion
 
     }
 }

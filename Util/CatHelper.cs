@@ -108,7 +108,7 @@ namespace Com.Dianping.Cat.Util
                 return null;
             try
             {
-                var tran = Cat.GetProducer().NewTransaction(type, name);
+                var tran = Cat.NewTransaction(type, name);
                 tran.Status = "0";
                 return tran;
             }
@@ -120,49 +120,40 @@ namespace Com.Dianping.Cat.Util
 
         public static void LogEvent(string type, string name, string status = "0", string nameValuePairs = null)
         {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return;
-            Cat.GetProducer().LogEvent(type, name, status, nameValuePairs);
+            Cat.LogEvent(type, name, status, nameValuePairs);
         }
 
         public static void LogError(Exception ex)
         {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return;
-            Cat.GetProducer().LogError(ex);
+            Cat.LogError(ex);
         }
 
         public static void LogHeartbeat(string type, string name, string status = "0", string nameValuePairs = null)
         {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return;
-            Cat.GetProducer().LogHeartbeat(type, name, status, nameValuePairs);
+            Cat.LogHeartbeat(type, name, status, nameValuePairs);
         }
 
         public static void LogMetricForCount(string name, int quantity = 1)
         {
-            LogMetricInternal(name, "C", quantity.ToString());
+            Cat.LogMetricForCount(name, quantity);
         }
 
         public static void LogMetricForDuration(string name, double value)
         {
-            LogMetricInternal(name, "T", String.Format("{0:F}", value));
+            Cat.LogMetricForDuration(name, value);
         }
 
-        public static void LogMetricForSum(string name, double value)
+        public static void LogMetricForSum(string name, double sum, int quantity = 1)
         {
-            LogMetricInternal(name, "S", String.Format("{0:F}", value));
-        }
-
-        public static void LogMetricForSum(string name, double sum, int quantity)
-        {
-            LogMetricInternal(name, "S,C", String.Format("{0},{1:F}", quantity, sum));
+            Cat.LogMetricForSum(name, sum, quantity);
         }
 
         public static string GetRootMessageId()
         {
-            if (!Cat.IsInitialized()) { return string.Empty; }
-            if (!Cat.GetManager().CatEnabled) { return string.Empty; }
+            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
+            {
+                return string.Empty;
+            }
             var tree = Cat.GetManager().ThreadLocalMessageTree;
             if (tree == null)
             {
@@ -213,13 +204,6 @@ namespace Com.Dianping.Cat.Util
             {
                 tran.Complete();
             }
-        }
-
-        private static void LogMetricInternal(string name, string status, string keyValuePairs = null)
-        {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return;
-            Cat.GetProducer().LogMetric(name, status, keyValuePairs);
         }
 
         #region url info
