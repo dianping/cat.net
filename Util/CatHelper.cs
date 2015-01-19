@@ -18,134 +18,70 @@ namespace Com.Dianping.Cat.Util
 
         public static ITransaction BeginClientTransaction(string type, string name, WebRequest request)
         {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return null;
-            try
+            var tran = Cat.NewTransaction(type, name);
+            tran.Status = "0";
+            Cat.LogEvent(type, request.RequestUri.AbsolutePath, "0", request.RequestUri.ToString());
+            var tree = Cat.GetManager().ThreadLocalMessageTree;
+            if (tree == null)
             {
-                var tran = Cat.GetProducer().NewTransaction(type, name);
-                tran.Status = "0";
-                LogEvent(type, request.RequestUri.AbsolutePath, "0", request.RequestUri.ToString());
-                var tree = Cat.GetManager().ThreadLocalMessageTree;
-                if (tree == null)
-                {
-                    Cat.GetManager().Setup();
-                    tree = Cat.GetManager().ThreadLocalMessageTree;
-                }
-                string serverMessageId = Cat.GetProducer().CreateMessageId();
-                string rootMessageId = (tree.RootMessageId ?? tree.MessageId);
-                string currentMessageId = tree.MessageId;
-                LogEvent("RemoteCall", "HttpRequest", "0", serverMessageId);
-
-                request.Headers.Add(CatHelper.CatRootId, rootMessageId);
-                request.Headers.Add(CatHelper.CatParentId, currentMessageId);
-                request.Headers.Add(CatHelper.CatId, serverMessageId);
-
-                return tran;
+                Cat.GetManager().Setup();
+                tree = Cat.GetManager().ThreadLocalMessageTree;
             }
-            catch
-            {
-                return null;
-            }
+            string serverMessageId = Cat.GetProducer().CreateMessageId();
+            string rootMessageId = (tree.RootMessageId ?? tree.MessageId);
+            string currentMessageId = tree.MessageId;
+            Cat.LogEvent("RemoteCall", "HttpRequest", "0", serverMessageId);
+
+            request.Headers.Add(CatHelper.CatRootId, rootMessageId);
+            request.Headers.Add(CatHelper.CatParentId, currentMessageId);
+            request.Headers.Add(CatHelper.CatId, serverMessageId);
+
+            return tran;
         }
 
         public static ITransaction BeginServerTransaction(string type, string name = null, HttpResponse response = null)
         {
+            var httpContext = System.Web.HttpContext.Current;
+            if (httpContext == null) { return null; }
+            var request = httpContext.Request;
 
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return null;
-            try
+            string rootMessageId = request.Headers[CatHelper.CatRootId];
+            string serverMessageId = request.Headers[CatHelper.CatParentId];
+            string currentMessageId = request.Headers[CatHelper.CatId];
+
+            if (string.IsNullOrWhiteSpace(name))
+                name = request.Path;
+
+            var tran = Cat.NewTransaction(type, name);
+            var tree = Cat.GetManager().ThreadLocalMessageTree;
+            if (tree == null)
             {
-                var httpContext = System.Web.HttpContext.Current;
-                if (httpContext == null) { return null; }
-                var request = httpContext.Request;
-
-                string rootMessageId = request.Headers[CatHelper.CatRootId];
-                string serverMessageId = request.Headers[CatHelper.CatParentId];
-                string currentMessageId = request.Headers[CatHelper.CatId];
-
-                if (string.IsNullOrWhiteSpace(name))
-                    name = request.Path;
-
-                var tran = Cat.GetProducer().NewTransaction(type, name);
-                var tree = Cat.GetManager().ThreadLocalMessageTree;
-                if (tree == null)
-                {
-                    Cat.GetManager().Setup();
-                    tree = Cat.GetManager().ThreadLocalMessageTree;
-                }
-
-                tree.RootMessageId = rootMessageId;
-                tree.ParentMessageId = serverMessageId;
-                if (!string.IsNullOrEmpty(currentMessageId))
-                {
-                    tree.MessageId = currentMessageId;
-                }
-                tran.Status = "0";
-
-                if (response != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(rootMessageId))
-                        response.AddHeader(CatHelper.CatRootId, rootMessageId);
-                    if (!string.IsNullOrWhiteSpace(currentMessageId))
-                        response.AddHeader(CatHelper.CatParentId, currentMessageId);
-                    response.AddHeader(CatHelper.CatId, tree.MessageId);
-                }
-
-                Cat.GetProducer().LogEvent(type, type + ".Server", "0", getURLServerValue(request));
-                Cat.GetProducer().LogEvent(type, type + ".Method", "0", getURLMethodValue(request));
-                Cat.GetProducer().LogEvent(type, type + ".Client", "0", AppEnv.GetClientIp(request));
-                return tran;
+                Cat.GetManager().Setup();
+                tree = Cat.GetManager().ThreadLocalMessageTree;
             }
-            catch
+
+            tree.RootMessageId = rootMessageId;
+            tree.ParentMessageId = serverMessageId;
+            if (!string.IsNullOrEmpty(currentMessageId))
             {
-                return null;
+                tree.MessageId = currentMessageId;
             }
-        }
+            tran.Status = "0";
 
-        public static ITransaction BeginTransaction(string type, string name)
-        {
-            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
-                return null;
-            try
+            if (response != null)
             {
-                var tran = Cat.NewTransaction(type, name);
-                tran.Status = "0";
-                return tran;
+                if (!string.IsNullOrWhiteSpace(rootMessageId))
+                    response.AddHeader(CatHelper.CatRootId, rootMessageId);
+                if (!string.IsNullOrWhiteSpace(currentMessageId))
+                    response.AddHeader(CatHelper.CatParentId, currentMessageId);
+                response.AddHeader(CatHelper.CatId, tree.MessageId);
             }
-            catch
-            {
-                return null;
-            }
-        }
 
-        public static void LogEvent(string type, string name, string status = "0", string nameValuePairs = null)
-        {
-            Cat.LogEvent(type, name, status, nameValuePairs);
-        }
+            Cat.LogEvent(type, type + ".Server", "0", getURLServerValue(request));
+            Cat.LogEvent(type, type + ".Method", "0", getURLMethodValue(request));
+            Cat.LogEvent(type, type + ".Client", "0", AppEnv.GetClientIp(request));
 
-        public static void LogError(Exception ex)
-        {
-            Cat.LogError(ex);
-        }
-
-        public static void LogHeartbeat(string type, string name, string status = "0", string nameValuePairs = null)
-        {
-            Cat.LogHeartbeat(type, name, status, nameValuePairs);
-        }
-
-        public static void LogMetricForCount(string name, int quantity = 1)
-        {
-            Cat.LogMetricForCount(name, quantity);
-        }
-
-        public static void LogMetricForDuration(string name, double value)
-        {
-            Cat.LogMetricForDuration(name, value);
-        }
-
-        public static void LogMetricForSum(string name, double sum, int quantity = 1)
-        {
-            Cat.LogMetricForSum(name, sum, quantity);
+            return tran;
         }
 
         public static string GetRootMessageId()
@@ -161,12 +97,7 @@ namespace Com.Dianping.Cat.Util
                 tree = Cat.GetManager().ThreadLocalMessageTree;
             }
 
-            string rootId = tree.RootMessageId;
-            if (string.IsNullOrEmpty(rootId))
-            {
-                rootId = tree.MessageId;
-            }
-            return rootId;
+            return string.IsNullOrEmpty(tree.RootMessageId) ? tree.MessageId : tree.RootMessageId;
         }
 
         public static string GetMessageId()
@@ -180,30 +111,6 @@ namespace Com.Dianping.Cat.Util
                 tree = Cat.GetManager().ThreadLocalMessageTree;
             }
             return tree.MessageId;
-        }
-
-        public static void SetTrancationStatus(ITransaction tran, string status)
-        {
-            if (tran != null)
-            {
-                tran.Status = status;
-            }
-        }
-
-        public static void SetTrancationStatus(ITransaction tran, Exception exception)
-        {
-            if (tran != null)
-            {
-                tran.SetStatus(exception);
-            }
-        }
-
-        public static void CompleteTrancation(ITransaction tran)
-        {
-            if (tran != null)
-            {
-                tran.Complete();
-            }
         }
 
         #region url info

@@ -26,19 +26,19 @@ namespace Com.Dianping.Cat.Web
             try
             {
                 handler.ProcessRequest(context);
-                CatHelper.CompleteTrancation(tran);
+                tran.Complete();
             }
             catch (Exception ex)
             {
                 var baseEx = ex.GetBaseException();
                 if (baseEx is ThreadAbortException)
                 {
-                    CatHelper.CompleteTrancation(tran);
+                    tran.Complete();
                     return;
                 }
-                CatHelper.LogEvent(tran.Type, "Exception", baseEx.GetType().FullName, baseEx.StackTrace);
-                CatHelper.SetTrancationStatus(tran, baseEx);
-                CatHelper.CompleteTrancation(tran);
+                Cat.LogEvent(tran.Type, "Exception", baseEx.GetType().FullName, baseEx.StackTrace);
+                tran.SetStatus(baseEx);
+                tran.Complete();
                 throw;
             }
         }
