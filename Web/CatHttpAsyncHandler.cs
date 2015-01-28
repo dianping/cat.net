@@ -33,27 +33,25 @@ namespace Com.Dianping.Cat.Web
             }
             catch (Exception ex)
             {
-                CatHelper.SetTrancationStatus(tran, ex);
+                tran.SetStatus(ex);
                 throw;
             }
         }
 
         public void EndProcessRequest(IAsyncResult result)
         {
-            if (asyncHandler == null)
-                return;
             try
             {
                 asyncHandler.EndProcessRequest(result);
             }
             catch (Exception ex)
             {
-                CatHelper.SetTrancationStatus(tran, ex);
+                tran.SetStatus(ex);
                 throw;
             }
             finally
             {
-                CatHelper.CompleteTrancation(tran);
+                tran.Complete();
             }
         }
 
@@ -71,12 +69,12 @@ namespace Com.Dianping.Cat.Web
                 {
                     return;
                 }
-                CatHelper.SetTrancationStatus(tran, baseEx);
+                tran.SetStatus(ex);
                 throw;
             }
             finally
             {
-                CatHelper.CompleteTrancation(tran);
+                tran.Complete();
             }
         }
     }

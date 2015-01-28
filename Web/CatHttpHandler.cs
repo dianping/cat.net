@@ -36,12 +36,12 @@ namespace Com.Dianping.Cat.Web
                 {
                     return;
                 }
-                CatHelper.SetTrancationStatus(tran, baseEx);
+                tran.SetStatus(ex);
                 throw;
             }
             finally
             {
-                CatHelper.CompleteTrancation(tran);
+                tran.Complete();
             }
         }
     }
