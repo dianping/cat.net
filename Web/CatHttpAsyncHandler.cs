@@ -24,8 +24,6 @@ namespace Com.Dianping.Cat.Web
 
         public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
         {
-            if (asyncHandler == null)
-                return null;
             tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
             try
             {
