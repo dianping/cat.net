@@ -6,40 +6,42 @@ using System.Web;
 using System.Web.SessionState;
 using Com.Dianping.Cat.Util;
 using System.Threading;
+using Com.Dianping.Cat.Message;
 
 namespace Com.Dianping.Cat.Web
 {
     public class CatHttpHandler : IHttpHandler, IRequiresSessionState
     {
+        private ITransaction tran = null;
+        private IHttpHandler handler;
+
+        public bool IsReusable { get { return handler.IsReusable; } }
+
         public CatHttpHandler(IHttpHandler httpHandler)
         {
             this.handler = httpHandler;
         }
 
-        private IHttpHandler handler;
-
-        public bool IsReusable { get { return handler.IsReusable; } }
-
         public void ProcessRequest(HttpContext context)
         {
-            var tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
+            tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
             try
             {
                 handler.ProcessRequest(context);
-                tran.Complete();
             }
             catch (Exception ex)
             {
                 var baseEx = ex.GetBaseException();
                 if (baseEx is ThreadAbortException)
                 {
-                    tran.Complete();
                     return;
                 }
-                Cat.LogEvent(tran.Type, "Exception", baseEx.GetType().FullName, baseEx.StackTrace);
-                tran.SetStatus(baseEx);
-                tran.Complete();
+                CatHelper.SetTrancationStatus(tran, baseEx);
                 throw;
+            }
+            finally
+            {
+                CatHelper.CompleteTrancation(tran);
             }
         }
     }
