@@ -26,28 +26,36 @@ namespace Com.Dianping.Cat.Web
             var tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
             try
             {
+                if (extraData == null)
+                    extraData = new ExtraData(extraData, tran);
                 return asyncHandler.BeginProcessRequest(context, cb, extraData);
             }
             catch (Exception ex)
             {
                 tran.SetStatus(ex);
-                tran.Complete();
                 throw;
             }
         }
 
         public void EndProcessRequest(IAsyncResult result)
         {
-            var tran = CatHelper.BeginServerTransaction("URL");
+            ITransaction tran = null;
             try
             {
+                var extraData = result.AsyncState as ExtraData;
+                if (extraData != null)
+                    tran = extraData.CatTransaction;
+
                 asyncHandler.EndProcessRequest(result);
             }
             catch (Exception ex)
             {
                 tran.SetStatus(ex);
-                tran.Complete();
                 throw;
+            }
+            finally
+            {
+                tran.Complete();
             }
         }
 
@@ -71,6 +79,17 @@ namespace Com.Dianping.Cat.Web
             finally
             {
                 tran.Complete();
+            }
+        }
+
+        class ExtraData
+        {
+            public object Value { get; set; }
+            public ITransaction CatTransaction { get; set; }
+            public ExtraData(object value, ITransaction tran)
+            {
+                Value = value;
+                CatTransaction = tran;
             }
         }
     }
