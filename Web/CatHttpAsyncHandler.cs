@@ -12,7 +12,6 @@ namespace Com.Dianping.Cat.Web
 {
     public class CatHttpAsyncHandler : IHttpAsyncHandler, IRequiresSessionState
     {
-        private ITransaction tran = null;
         private IHttpAsyncHandler asyncHandler;
 
         public bool IsReusable { get { return asyncHandler.IsReusable; } }
@@ -24,7 +23,7 @@ namespace Com.Dianping.Cat.Web
 
         public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
         {
-            tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
+            var tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
             try
             {
                 return asyncHandler.BeginProcessRequest(context, cb, extraData);
@@ -32,12 +31,14 @@ namespace Com.Dianping.Cat.Web
             catch (Exception ex)
             {
                 tran.SetStatus(ex);
+                tran.Complete();
                 throw;
             }
         }
 
         public void EndProcessRequest(IAsyncResult result)
         {
+            var tran = CatHelper.BeginServerTransaction("URL");
             try
             {
                 asyncHandler.EndProcessRequest(result);
@@ -45,17 +46,14 @@ namespace Com.Dianping.Cat.Web
             catch (Exception ex)
             {
                 tran.SetStatus(ex);
-                throw;
-            }
-            finally
-            {
                 tran.Complete();
+                throw;
             }
         }
 
         public void ProcessRequest(HttpContext context)
         {
-            tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
+            var tran = CatHelper.BeginServerTransaction("URL", response: context.Response);
             try
             {
                 asyncHandler.ProcessRequest(context);
