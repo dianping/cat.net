@@ -27,11 +27,13 @@ namespace Com.Dianping.Cat.Web
             try
             {
                 if (extraData == null)
-                    extraData = new ExtraData(extraData, tran);
+                    extraData = tran;
+
                 return asyncHandler.BeginProcessRequest(context, cb, extraData);
             }
             catch (Exception ex)
             {
+                Cat.GetProducer().LogError(ex);
                 tran.SetStatus(ex);
                 throw;
             }
@@ -42,14 +44,15 @@ namespace Com.Dianping.Cat.Web
             ITransaction tran = null;
             try
             {
-                var extraData = result.AsyncState as ExtraData;
+                var extraData = result.AsyncState as ITransaction;
                 if (extraData != null)
-                    tran = extraData.CatTransaction;
+                    tran = extraData;
 
                 asyncHandler.EndProcessRequest(result);
             }
             catch (Exception ex)
             {
+                Cat.GetProducer().LogError(ex);
                 tran.SetStatus(ex);
                 throw;
             }
@@ -68,28 +71,17 @@ namespace Com.Dianping.Cat.Web
             }
             catch (Exception ex)
             {
-                var baseEx = ex.GetBaseException();
-                if (baseEx is ThreadAbortException)
+                if (ex.GetBaseException() is ThreadAbortException)
                 {
                     return;
                 }
+                Cat.GetProducer().LogError(ex);
                 tran.SetStatus(ex);
                 throw;
             }
             finally
             {
                 tran.Complete();
-            }
-        }
-
-        class ExtraData
-        {
-            public object Value { get; set; }
-            public ITransaction CatTransaction { get; set; }
-            public ExtraData(object value, ITransaction tran)
-            {
-                Value = value;
-                CatTransaction = tran;
             }
         }
     }
