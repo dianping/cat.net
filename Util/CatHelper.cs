@@ -12,9 +12,25 @@ namespace Com.Dianping.Cat.Util
 {
     public static class CatHelper
     {
-        public const string CatRootId = "X-Cat-RootId";
-        public const string CatParentId = "X-Cat-ParentId";
-        public const string CatId = "X-Cat-Id";
+        public class CatRequestMessage
+        {
+            public string CatRootId { get; private set; }
+            public string CatParentId { get; private set; }
+            public string CatId { get; private set; }
+            public string RequestMothed { get; private set; }
+
+            public CatRequestMessage(string catRootId, string catParentId, string catId, string requestMothed)
+            {
+                CatRootId = catRootId;
+                CatParentId = catParentId;
+                CatId = catId;
+                RequestMothed = requestMothed;
+            }
+        }
+
+        private const string CatRootId = "X-Cat-RootId";
+        private const string CatParentId = "X-Cat-ParentId";
+        private const string CatId = "X-Cat-Id";
 
         public static ITransaction BeginClientTransaction(string type, string name, WebRequest request)
         {
@@ -91,6 +107,55 @@ namespace Com.Dianping.Cat.Util
                 return null;
             }
         }
+
+        public static ITransaction BeginRequestTransaction(out CatRequestMessage catRequestMessage, string type, string name, string requestMothed)
+        {
+            var tran = Cat.NewTransaction(type, name);
+            Cat.LogEvent(type, name, "0", string.Format("Mothed.Request : {0}", requestMothed));
+            var tree = Cat.GetManager().ThreadLocalMessageTree;
+            if (tree == null)
+            {
+                Cat.GetManager().Setup();
+                tree = Cat.GetManager().ThreadLocalMessageTree;
+            }
+            string serverMessageId = Cat.GetProducer().CreateMessageId();
+            string rootMessageId = (tree.RootMessageId ?? tree.MessageId);
+            string currentMessageId = tree.MessageId;
+            Cat.LogEvent("RemoteCall", "Request", "0", serverMessageId);
+
+            catRequestMessage = new CatRequestMessage(rootMessageId, currentMessageId, serverMessageId, name);
+
+            return tran;
+        }
+
+        public static ITransaction BeginResponseTransaction(CatRequestMessage catRequestMessage, string type, string responseMothed)
+        {
+            if (catRequestMessage == null)
+                throw new ArgumentNullException("catRequestMessage");
+            string rootMessageId = catRequestMessage.CatRootId;
+            string serverMessageId = catRequestMessage.CatParentId;
+            string currentMessageId = catRequestMessage.CatId;
+
+            var tran = Cat.NewTransaction(type, responseMothed);
+            var tree = Cat.GetManager().ThreadLocalMessageTree;
+            if (tree == null)
+            {
+                Cat.GetManager().Setup();
+                tree = Cat.GetManager().ThreadLocalMessageTree;
+            }
+
+            tree.RootMessageId = rootMessageId;
+            tree.ParentMessageId = serverMessageId;
+            if (!string.IsNullOrEmpty(currentMessageId))
+            {
+                tree.MessageId = currentMessageId;
+            }
+
+            Cat.LogEvent(type, responseMothed, "0", string.Format("Mothed.Response : {0}", catRequestMessage.RequestMothed));
+
+            return tran;
+        }
+
 
         public static string GetRootMessageId()
         {
