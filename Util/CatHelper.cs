@@ -41,47 +41,55 @@ namespace Com.Dianping.Cat.Util
 
         public static ITransaction BeginServerTransaction(string type, string name = null, HttpResponse response = null)
         {
-            var httpContext = System.Web.HttpContext.Current;
-            if (httpContext == null) { return null; }
-            var request = httpContext.Request;
-
-            string rootMessageId = request.Headers[CatHelper.CatRootId];
-            string serverMessageId = request.Headers[CatHelper.CatParentId];
-            string currentMessageId = request.Headers[CatHelper.CatId];
-
-            if (string.IsNullOrWhiteSpace(name))
-                name = request.Path;
-
-            var tran = Cat.NewTransaction(type, name);
-            var tree = Cat.GetManager().ThreadLocalMessageTree;
-            if (tree == null)
+            if (!Cat.IsInitialized() || !Cat.GetManager().CatEnabled)
+                return null;
+            try
             {
-                Cat.GetManager().Setup();
-                tree = Cat.GetManager().ThreadLocalMessageTree;
-            }
+                var httpContext = System.Web.HttpContext.Current;
+                if (httpContext == null) { return null; }
+                var request = httpContext.Request;
 
-            tree.RootMessageId = rootMessageId;
-            tree.ParentMessageId = serverMessageId;
-            if (!string.IsNullOrEmpty(currentMessageId))
+                string rootMessageId = request.Headers[CatHelper.CatRootId];
+                string serverMessageId = request.Headers[CatHelper.CatParentId];
+                string currentMessageId = request.Headers[CatHelper.CatId];
+
+                if (string.IsNullOrWhiteSpace(name))
+                    name = request.Path;
+
+                var tran = Cat.GetProducer().NewTransaction(type, name);
+                var tree = Cat.GetManager().ThreadLocalMessageTree;
+                if (tree == null)
+                {
+                    Cat.GetManager().Setup();
+                    tree = Cat.GetManager().ThreadLocalMessageTree;
+                }
+
+                tree.RootMessageId = rootMessageId;
+                tree.ParentMessageId = serverMessageId;
+                if (!string.IsNullOrEmpty(currentMessageId))
+                {
+                    tree.MessageId = currentMessageId;
+                }
+                tran.Status = "0";
+
+                if (response != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(rootMessageId))
+                        response.AddHeader(CatHelper.CatRootId, rootMessageId);
+                    if (!string.IsNullOrWhiteSpace(currentMessageId))
+                        response.AddHeader(CatHelper.CatParentId, currentMessageId);
+                    response.AddHeader(CatHelper.CatId, tree.MessageId);
+                }
+
+                Cat.GetProducer().LogEvent(type, type + ".Server", "0", getURLServerValue(request));
+                Cat.GetProducer().LogEvent(type, type + ".Method", "0", getURLMethodValue(request));
+                Cat.GetProducer().LogEvent(type, type + ".Client", "0", AppEnv.GetClientIp(request));
+                return tran;
+            }
+            catch
             {
-                tree.MessageId = currentMessageId;
+                return null;
             }
-            tran.Status = "0";
-
-            if (response != null)
-            {
-                if (!string.IsNullOrWhiteSpace(rootMessageId))
-                    response.AddHeader(CatHelper.CatRootId, rootMessageId);
-                if (!string.IsNullOrWhiteSpace(currentMessageId))
-                    response.AddHeader(CatHelper.CatParentId, currentMessageId);
-                response.AddHeader(CatHelper.CatId, tree.MessageId);
-            }
-
-            Cat.LogEvent(type, type + ".Server", "0", getURLServerValue(request));
-            Cat.LogEvent(type, type + ".Method", "0", getURLMethodValue(request));
-            Cat.LogEvent(type, type + ".Client", "0", AppEnv.GetClientIp(request));
-
-            return tran;
         }
 
         public static string GetRootMessageId()
