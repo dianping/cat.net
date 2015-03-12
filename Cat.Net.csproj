@@ -54,7 +54,6 @@
     <Compile Include="Message\Internals\DefaultMetric.cs" />
     <Compile Include="Message\Internals\NullMetric.cs" />
     <Compile Include="Util\AppEnv.cs" />
-    <Compile Include="Util\CatHelper.cs" />
     <Compile Include="Util\Logger.cs" />
     <Compile Include="Message\IEvent.cs" />
     <Compile Include="Message\IHeartbeat.cs" />
@@ -95,9 +94,6 @@
     <Compile Include="Util\NetworkInterfaceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Message\Spi\Internals\StatusUpdateTask.cs" />
-    <Compile Include="Web\CatHttpAsyncHandler.cs" />
-    <Compile Include="Web\CatHttpHandler.cs" />
-    <Compile Include="Web\CatHttpModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
