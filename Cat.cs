@@ -113,11 +113,6 @@ namespace Com.Dianping.Cat
             return Cat.GetProducer().NewEvent(type, name);
         }
 
-        public static IHeartbeat NewHeartbeat(string type,string name)
-        {
-            return Cat.GetProducer().NewHeartbeat(type, name);
-        }
-
         public static ITransaction NewTransaction(string type, string name)
         {
             return Cat.GetProducer().NewTransaction(type, name);
