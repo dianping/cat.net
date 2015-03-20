@@ -68,7 +68,7 @@ namespace Com.Dianping.Cat.Message.Internals
             }
             else
             {
-                _mData.Append('&').Append(keyValuePairs);
+                _mData.Append(keyValuePairs);
             }
         }
 
