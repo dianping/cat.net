@@ -11,7 +11,7 @@ namespace Com.Dianping.Cat.Util
         public static long CurrentTimeMicros()
         {
             //return HighResTicksProvider.GetTickCount () / 10L; // it's microsecond precise
-            return DateTime.Now.Ticks/10L; // it's millisecond precise
+            return DateTime.Now.Ticks / 10L; // it's millisecond precise
         }
 
         public static long CurrentTimeHoursForJava()
@@ -19,7 +19,7 @@ namespace Com.Dianping.Cat.Util
             DateTime baseline = new DateTime(1970, 1, 1, 0, 0, 0);
             TimeSpan ts = new TimeSpan(DateTime.UtcNow.Ticks - baseline.Ticks);
 
-            return ((long) ts.TotalMilliseconds/3600000L);
+            return ((long)ts.TotalMilliseconds / 3600000L);
         }
     }
 
@@ -62,7 +62,7 @@ namespace Com.Dianping.Cat.Util
             long c = 0;
             QueryPerformanceCounter(ref c);
 
-            return (long) (((double) c)*1000*10000/(f));
+            return (long)(((double)c) * 1000 * 10000 / (f));
         }
     }
 }

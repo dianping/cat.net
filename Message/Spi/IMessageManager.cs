@@ -1,4 +1,5 @@
 ﻿using Com.Dianping.Cat.Configuration;
+using Com.Dianping.Cat.Message.Spi.Internals;
 
 namespace Com.Dianping.Cat.Message.Spi
 {
@@ -73,5 +74,7 @@ namespace Com.Dianping.Cat.Message.Spi
         ///</summary>
         ///<param name="transaction"> </param>
         void End(ITransaction transaction);
+
+        MessageIdFactory GetMessageIdFactory();
     }
 }

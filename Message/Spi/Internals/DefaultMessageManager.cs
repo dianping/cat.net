@@ -9,6 +9,7 @@ using System.Threading;
 
 namespace Com.Dianping.Cat.Message.Spi.Internals
 {
+    [Serializable]
     public class DefaultMessageManager : IMessageManager
     {
         // we don't use static modifier since MessageManager is a singleton in
@@ -77,7 +78,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
             _mFactory.Initialize(_mClientConfig.Domain.Id);
 
             // start status update task
-            ThreadPool.QueueUserWorkItem(_mStatusUpdateTask.Run);
+            // ThreadPool.QueueUserWorkItem(_mStatusUpdateTask.Run);
 
             Logger.Info("Thread(StatusUpdateTask) started.");
         }
@@ -185,7 +186,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
             return null;
         }
 
-        internal String NextMessageId()
+        public String NextMessageId()
         {
             return _mFactory.GetNextId();
         }
@@ -275,8 +276,9 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                     }
                     return false;
                 }
+                    throw new Exception("Stack为空, 没找到对应的Transaction.");
 
-                throw new Exception("Stack为空, 没找到对应的Transaction.");
+
             }
 
             /// <summary>
@@ -329,8 +331,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
                 {
                     // missing transaction end, log a BadInstrument event so that
                     // developer can fix the code
-                    IMessage notCompleteEvent = new DefaultEvent("CAT", "BadInstrument")
-                                                    {Status = "TransactionNotCompleted"};
+                    IMessage notCompleteEvent = new DefaultEvent("CAT", "BadInstrument") { Status = "TransactionNotCompleted" };
                     notCompleteEvent.Complete();
                     transaction.AddChild(notCompleteEvent);
                     transaction.Complete();

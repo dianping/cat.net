@@ -36,8 +36,10 @@
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
   </ItemGroup>
@@ -48,6 +50,10 @@
     <Compile Include="Configuration\ClientConfig.cs" />
     <Compile Include="Configuration\Domain.cs" />
     <Compile Include="Configuration\Server.cs" />
+    <Compile Include="Message\IMetric.cs" />
+    <Compile Include="Message\Internals\DefaultMetric.cs" />
+    <Compile Include="Message\Internals\NullMetric.cs" />
+    <Compile Include="Util\AppEnv.cs" />
     <Compile Include="Util\Logger.cs" />
     <Compile Include="Message\IEvent.cs" />
     <Compile Include="Message\IHeartbeat.cs" />

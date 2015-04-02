@@ -1,9 +1,11 @@
 ﻿using Com.Dianping.Cat.Util;
+//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Com.Dianping.Cat.Message.Internals
 {
+    [Serializable]
     public class DefaultTransaction : AbstractMessage, ITransaction
     {
         private readonly Action<ITransaction> _endCallBack;
@@ -20,6 +22,7 @@ namespace Com.Dianping.Cat.Message.Internals
 
         #region ITransaction Members
 
+        //[JsonConverter(typeof(List<DefaultTransaction>))]
         public IList<IMessage> Children
         {
             get { return _mChildren ?? (_mChildren = new List<IMessage>()); }
@@ -47,11 +50,11 @@ namespace Com.Dianping.Cat.Message.Internals
                         {
                             ITransaction trx = lastChild as ITransaction;
 
-                            duration = trx.Timestamp*1000L + trx.DurationInMicros - TimestampInMicros;
+                            duration = trx.Timestamp * 1000L + trx.DurationInMicros - TimestampInMicros;
                         }
                         else
                         {
-                            duration = lastChild.Timestamp*1000L - TimestampInMicros;
+                            duration = lastChild.Timestamp * 1000L - TimestampInMicros;
                         }
                     }
                 }
@@ -63,8 +66,8 @@ namespace Com.Dianping.Cat.Message.Internals
 
         public long DurationInMillis
         {
-            get { return DurationInMicros/1000L; }
-            set { _mDurationInMicro = value*1000L; }
+            get { return DurationInMicros / 1000L; }
+            set { _mDurationInMicro = value * 1000L; }
         }
 
         public bool Standalone { get; set; }
@@ -85,7 +88,7 @@ namespace Com.Dianping.Cat.Message.Internals
             if (IsCompleted())
             {
                 // complete() was called more than once
-                IMessage evt0 = new DefaultEvent("CAT", "BadInstrument") {Status = "TransactionAlreadyCompleted"};
+                IMessage evt0 = new DefaultEvent("CAT", "BadInstrument") { Status = "TransactionAlreadyCompleted" };
 
                 evt0.Complete();
                 AddChild(evt0);

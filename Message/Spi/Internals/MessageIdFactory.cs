@@ -74,7 +74,7 @@ namespace Com.Dianping.Cat.Message.Spi.Internals
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (byte b  in  bytes)
+            foreach (byte b in bytes)
             {
                 sb.Append(((b >> 4) & 0x0F).ToString("x"));
                 sb.Append((b & 0x0F).ToString("x"));
